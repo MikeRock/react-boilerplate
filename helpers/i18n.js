@@ -20,8 +20,8 @@ const languagesDetectorOption = {
   caches: ['localStorage', 'cookie']
 
   // optional expire and domain for set cookie
-  //cookieMinutes: 10,
-  //cookieDomain: 'myDomain'
+  // cookieMinutes: 10,
+  // cookieDomain: 'myDomain'
 }
 
 export default config => ({
