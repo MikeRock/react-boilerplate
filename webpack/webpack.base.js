@@ -4,6 +4,9 @@ import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import GitRevisionPlugin from 'git-revision-webpack-plugin'
 import noop from 'noop-webpack-plugin'
 import path from 'path'
+import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
+// import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin'
+import SizePLugin from 'size-plugin'
 import RemoteWebpackPlugin from 'save-remote-file-webpack-plugin'
 import workbox from 'workbox-webpack-plugin'
 import PurgeCssWebpackPlugin from 'purgecss-webpack-plugin'
@@ -175,7 +178,7 @@ const config = () => ({
         ]
       },
       {
-        test: /(?<!global)\.s?css(\?[\w]+)?$/,
+        test: /(?<!global)\.s?css(\?[=\w]+)?$/,
         exclude: [/node_modules/, /global/],
         include: '/',
         use: [
@@ -235,7 +238,7 @@ const config = () => ({
         ]
       },
       {
-        test: /global\.s?css(\?[\w]+)?$/,
+        test: /global\.s?css(\?[=\w]+)?$/,
         exclude: /node_modules/,
         include: [/global/],
         //  include: '/', // path to globals
@@ -387,7 +390,7 @@ const config = () => ({
       writeToFileEmit: true
     }),
     new HtmlWebpackPlugin({
-      template: `${path.resolve(__dirname, './../src/templates/template.html')}`,
+      template: `!!prerender-loader?string!${path.resolve(process.cwd(), 'src/templates/template.html')}`,
       filename: 'index.html',
       title: 'Custom Title',
       compile: false,
@@ -400,8 +403,9 @@ const config = () => ({
     new PreloadPlugin({
       rel: 'preload',
       include: 'allAssets',
+      fileWhitelist: [/\.(ttf|otf|woff(2)?)(\?[=\w]+)?$/], // Preload fonts only
       as(entry) {
-        if (/\.css(\?[\w]+)?$/.test(entry)) return 'style'
+        if (/\.css(\?[=\w]+)?$/.test(entry)) return 'style'
         if (/\.(ttf|otf|woff(2)?)$/.test(entry)) return 'font'
         if (/\.(png|jpe?g|gif)$/.test(entry)) return 'image'
         return 'script'
@@ -412,7 +416,7 @@ const config = () => ({
     }),
     process.env.NODE_ENV === 'production'
       ? new CompressionPlugin({
-          test: /\.js(\?[\w]+)?$/i,
+          test: /\.js(\?[=\w]+)?$/i,
           filename: '[path].gz[query]',
           compressionOptions: { level: 5 }
         })
@@ -496,6 +500,10 @@ const config = () => ({
       // whitelist: WhitelisterPlugin([path.resolve(process.cwd(), './src/css/**/*.css')]),
       whitelistPatterns: [/unused/]
     }),
+    new SizePLugin(),
+    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Uncomment if using Moment.js
+    new InterpolateHtmlPlugin(process.env),
+
     new BundleAnalyzerPlugin({
       analyzerPort: 8080
     })
