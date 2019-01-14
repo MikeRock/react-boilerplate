@@ -10,15 +10,15 @@ module.exports = {
   copyright: 'Example Company, Inc.',
   paths: {
     src: {
-      base: './src/',
-      css: './src/css/',
-      js: './src/js/'
+      base: './../src/',
+      css: './../src/css/',
+      js: './../src/js/'
     },
     dist: {
-      base: './web/dist/',
+      base: './../web/dist/',
       clean: ['./img', './criticalcss', './css', './js']
     },
-    templates: './templates/'
+    templates: 'templates/'
   },
   urls: {
     live: 'https://example.com/',
@@ -30,16 +30,16 @@ module.exports = {
     cssName: 'styles'
   },
   entries: {
-    app: 'app.js'
+    app: 'App.js'
   },
   copyWebpackConfig: [
     {
-      from: './src/js/workbox-catch-handler.js',
+      from: 'helpers/workbox-catch-handler.js',
       to: 'js/[name].[ext]'
     }
   ],
   criticalCssConfig: {
-    base: './web/dist/criticalcss/',
+    base: './../web/dist/criticalcss/',
     suffix: '_critical.min.css',
     criticalHeight: 1200,
     criticalWidth: 1200,
@@ -64,10 +64,10 @@ module.exports = {
     basePath: ''
   },
   purgeCssConfig: {
-    paths: ['./templates/**/*.{twig,html}', './src/vue/**/*.{vue,html}'],
-    whitelist: ['./src/css/components/**/*.{css,pcss}'],
+    paths: ['./../src/templates/**/*.{twig,html}', 'src/vue/**/*.{html}'],
+    whitelist: ['./../src/css/**/*.{css}'],
     whitelistPatterns: [],
-    extensions: ['html', 'js', 'twig', 'vue']
+    extensions: ['html', 'js', 'twig']
   },
   saveRemoteFileConfig: [
     {
@@ -86,7 +86,7 @@ module.exports = {
     prefix: 'img/favicons/'
   },
   workboxConfig: {
-    swDest: '../sw.js',
+    swDest: 'sw.js',
     precacheManifestFilename: 'js/precache-manifest.[manifestHash].js',
     importScripts: ['/dist/workbox-catch-handler.js'],
     exclude: [/\.(png|jpe?g|gif|svg|webp)$/i, /\.map$/, /^manifest.*\\.js(?:on)?$/],

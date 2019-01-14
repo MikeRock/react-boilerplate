@@ -64,13 +64,13 @@ const configureBanner = () => {
 const configureBundleAnalyzer = buildType => {
   if (buildType === LEGACY_CONFIG) {
     return {
-      analyzerMode: 'static',
+      analyzerMode: '',
       reportFilename: 'report-legacy.html'
     }
   }
   if (buildType === MODERN_CONFIG) {
     return {
-      analyzerMode: 'static',
+      analyzerMode: 'disabled',
       reportFilename: 'report-modern.html'
     }
   }
@@ -90,7 +90,7 @@ const configureCriticalCss = () => {
     }
     console.log('source: ' + criticalSrc + ' dest: ' + criticalDest)
     return new CriticalCssPlugin({
-      base: './',
+      base: './../',
       src: criticalSrc,
       dest: criticalDest,
       extract: false,
@@ -116,7 +116,7 @@ const configureHtml = () => {
   return {
     templateContent: '',
     filename: 'webapp.html',
-    inject: false
+    inject: true
   }
 }
 
@@ -180,7 +180,7 @@ const configureOptimization = buildType => {
           common: false,
           styles: {
             name: settings.vars.cssName,
-            test: /\.(pcss|css|vue)$/,
+            test: /\.(pcss|css)$/,
             chunks: 'all',
             enforce: true
           }
@@ -212,32 +212,35 @@ const configureOptimization = buildType => {
 const configurePostcssLoader = buildType => {
   if (buildType === LEGACY_CONFIG) {
     return {
-      test: /\.(pcss|css)$/,
+      test: /\.s?css$/,
       use: [
         MiniCssExtractPlugin.loader,
         {
           loader: 'css-loader',
           options: {
-            importLoaders: 2,
+            importLoaders: 3,
             sourceMap: true
           }
-        },
-        {
-          loader: 'resolve-url-loader'
         },
         {
           loader: 'postcss-loader',
           options: {
             sourceMap: true
           }
-        }
+        },
+        {
+          loader: 'resolve-url-loader',
+          options: {
+            keepQuery: true
+          }
+        }, 'sass-loader'
       ]
     }
   }
   // Don't generate CSS for the modern config in production
   if (buildType === MODERN_CONFIG) {
     return {
-      test: /\.(pcss|css)$/,
+      test: /\.s?css$/,
       loader: 'ignore-loader'
     }
   }
@@ -315,14 +318,15 @@ module.exports = [
         path: path.resolve(__dirname, settings.paths.dist.base),
         filename: path.join('./css', '[name].[chunkhash].css')
       }),
-      new PurgecssPlugin(configurePurgeCss()),
+     //  new PurgecssPlugin(configurePurgeCss()),
       new webpack.BannerPlugin(configureBanner()),
       new HtmlWebpackPlugin(configureHtml()),
       new WebappWebpackPlugin(configureWebapp()),
       new CreateSymlinkPlugin(settings.createSymlinkConfig, true),
       new SaveRemoteFilePlugin(settings.saveRemoteFileConfig),
       new BundleAnalyzerPlugin(configureBundleAnalyzer(LEGACY_CONFIG))
-    ].concat(configureCriticalCss())
+    ]
+     // .concat(configureCriticalCss())
   }),
   merge(common.modernConfig, {
     output: {

@@ -11,7 +11,7 @@ const webpack = require('webpack')
 // webpack plugins
 const Dashboard = require('webpack-dashboard')
 const DashboardPlugin = require('webpack-dashboard/plugin')
-const dashboard = new Dashboard()
+// const dashboard = new Dashboard()
 
 // config files
 const common = require('./webpack.common.js')
@@ -88,24 +88,21 @@ const configurePostcssLoader = buildType => {
   // Don't generate CSS for the legacy config in development
   if (buildType === LEGACY_CONFIG) {
     return {
-      test: /\.(pcss|css)$/,
+      test: /\.css$/,
       loader: 'ignore-loader'
     }
   }
   if (buildType === MODERN_CONFIG) {
     return {
-      test: /\.(pcss|css)$/,
+      test: /\.(s?css)$/,
       use: [
         {
           loader: 'style-loader'
         },
         {
-          loader: 'vue-style-loader'
-        },
-        {
           loader: 'css-loader',
           options: {
-            importLoaders: 2,
+            importLoaders: 3,
             sourceMap: true
           }
         },
@@ -117,7 +114,8 @@ const configurePostcssLoader = buildType => {
           options: {
             sourceMap: true
           }
-        }
+        },
+        'sass-loader'
       ]
     }
   }
@@ -149,6 +147,6 @@ module.exports = [
     module: {
       rules: [configurePostcssLoader(MODERN_CONFIG), configureImageLoader(MODERN_CONFIG)]
     },
-    plugins: [new webpack.HotModuleReplacementPlugin(), new DashboardPlugin(dashboard.setData)]
+    plugins: [new webpack.HotModuleReplacementPlugin() /* new DashboardPlugin(dashboard.setData)  */]
   })
 ]

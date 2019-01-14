@@ -9,7 +9,6 @@ const merge = require('webpack-merge')
 // webpack plugins
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const WebpackNotifierPlugin = require('webpack-notifier')
 
 // config files
@@ -17,41 +16,17 @@ const pkg = require('./../package.json')
 const settings = require('./webpack.settings.js')
 
 // Configure Babel loader
-const configureBabelLoader = browserList => {
+const configureBabelLoader = () => {
   return {
     test: /\.js$/,
     exclude: /node_modules/,
-    use: {
-      loader: 'babel-loader',
-      options: {
-        presets: [
-          [
-            '@babel/preset-env',
-            {
-              modules: false,
-              useBuiltIns: 'entry',
-              targets: {
-                browsers: browserList
-              }
-            }
-          ]
-        ],
-        plugins: [
-          '@babel/plugin-syntax-dynamic-import',
-          [
-            '@babel/plugin-transform-runtime',
-            {
-              regenerator: true
-            }
-          ]
-        ]
-      }
-    }
+    use: 'babel-loader'
   }
 }
 
 // Configure Entries
 const configureEntries = () => {
+  console.log(__dirname)
   let entries = {}
   for (const [key, value] of Object.entries(settings.entries)) {
     entries[key] = path.resolve(__dirname, settings.paths.src.js + value)
@@ -87,14 +62,6 @@ const configureManifest = fileName => {
   }
 }
 
-// Configure Vue loader
-const configureVueLoader = () => {
-  return {
-    test: /\.vue$/,
-    loader: 'vue-loader'
-  }
-}
-
 // The base webpack config
 const baseConfig = {
   name: pkg.name,
@@ -103,24 +70,16 @@ const baseConfig = {
     path: path.resolve(__dirname, settings.paths.dist.base),
     publicPath: settings.urls.publicPath()
   },
-  resolve: {
-    alias: {
-      vue$: 'vue/dist/vue.esm.js'
-    }
-  },
   module: {
-    rules: [configureFontLoader(), configureVueLoader()]
+    rules: [configureFontLoader()]
   },
-  plugins: [
-    new WebpackNotifierPlugin({ title: 'Webpack', excludeWarnings: true, alwaysNotify: true }),
-    new VueLoaderPlugin()
-  ]
+  plugins: [new WebpackNotifierPlugin({ title: 'Webpack', excludeWarnings: true, alwaysNotify: true })]
 }
 
 // Legacy webpack config
 const legacyConfig = {
   module: {
-    rules: [configureBabelLoader(Object.values(pkg.browserslist.legacyBrowsers))]
+    rules: [configureBabelLoader()]
   },
   plugins: [
     new CopyWebpackPlugin(settings.copyWebpackConfig),
@@ -131,7 +90,7 @@ const legacyConfig = {
 // Modern webpack config
 const modernConfig = {
   module: {
-    rules: [configureBabelLoader(Object.values(pkg.browserslist.modernBrowsers))]
+    rules: [configureBabelLoader()]
   },
   plugins: [new ManifestPlugin(configureManifest('manifest.json'))]
 }
