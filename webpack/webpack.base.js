@@ -21,7 +21,7 @@ import CleanWebpackPlugin from 'clean-webpack-plugin'
 import WebpackManifestPlugin from 'webpack-manifest-plugin'
 // import PurifyCSSPlugin from 'purifycss-webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-// import CrittersPlugin from 'critters-webpack-plugin'
+import CrittersPlugin from 'critters-webpack-plugin'
 import CompressionPlugin from 'compression-webpack-plugin'
 import WebpackPWAManifest from 'webpack-pwa-manifest'
 import autoprefixer from 'autoprefixer'
@@ -32,6 +32,7 @@ import glob from 'glob-all'
 import sassUtils from 'node-sass-utils'
 import incstr from 'incstr'
 
+let localIdentMap = new Map()
 const createUniqueIdGenerator = () => {
   const index = {}
 
@@ -61,10 +62,15 @@ const createUniqueIdGenerator = () => {
 const uniqueIdGenerator = createUniqueIdGenerator()
 const _sass = sassUtils(sass)
 const generateScopedName = (localName, resourcePath) => {
+  let newIdent
   const [componentName, fileName] = resourcePath.split('/').slice(-2) // Component name if ComponentName/style.scss
   console.log(fileName)
   if (/global/.test(fileName)) return localName
-  return uniqueIdGenerator(componentName) + '_' + uniqueIdGenerator(localName)
+  else {
+    newIdent = uniqueIdGenerator(componentName) + '_' + uniqueIdGenerator(localName)
+    localIdentMap.set(localName, newIdent)
+  }
+  return newIdent
 }
 const theme = {
   primary: { color: 'pink' },
@@ -162,7 +168,7 @@ const config = () => ({
                 }
               },
               limit: 1000000,
-              name: '[sha256:hash:base64:8].[ext]'
+              name: '[sha256:hash:base64:5].[ext]'
               // publicPath: '/'
             }
           }
@@ -289,7 +295,7 @@ const config = () => ({
                 }
               },
               limit: 1000000,
-              name: 'img/[sha256:hash:base64:8].[ext]'
+              name: 'img/[sha256:hash:base64:5].[ext]'
               // publicPath: '/'
             }
           },
@@ -420,7 +426,7 @@ const config = () => ({
           excludeSourceMaps: true // default 'true'
         })
       : noop(),
-    //  new CrittersPlugin(),
+    // new CrittersPlugin(),
     /*
     new SWPrecachePlugin({
       cacheId: 'v1',
@@ -478,12 +484,17 @@ const config = () => ({
       filepath: 'js/analytics.js'
     }),
     new PurgeCssWebpackPlugin({
-      paths: glob.sync([
-        path.resolve(process.cwd(), './public/**/*.{html}'),
-        path.resolve(process.cwd(), './src/js/*.{js}')
-      ]),
+      paths: glob.sync(
+        [
+          path.resolve(process.cwd(), 'src/**/*'),
+          path.resolve(process.cwd(), 'public/**/*.{html}'),
+          path.resolve(process.cwd(), 'src/js/**/*.{js}')
+        ],
+        { nodir: true }
+      ),
+      whitelist: () => Array.from([].map(key => localIdentMap.get(key))),
       // whitelist: WhitelisterPlugin([path.resolve(process.cwd(), './src/css/**/*.css')]),
-      whitelistPatterns: []
+      whitelistPatterns: [/unused/]
     }),
     new BundleAnalyzerPlugin({
       analyzerPort: 8080
