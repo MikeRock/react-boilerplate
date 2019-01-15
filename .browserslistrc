@@ -1,2 +1,8 @@
-last 1 version
+[modern]
+Firefox >= 53
+Edge >= 15
+Chrome >= 58
+iOS >= 10.1
+
+[legacy]
 > 2%

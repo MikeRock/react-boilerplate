@@ -4,9 +4,9 @@ coverage
 .nyc_output
 .idea
 build
+logs
 public
 caches
 *.log
-.vscode 
+.vscode
 .env
- 

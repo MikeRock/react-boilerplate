@@ -1,3 +1,5 @@
-export default async () => {
-  return 'TEST'
-}
+
+export default () =>
+  new Promise((resolve, reject) => {
+    resolve('TEST')
+  })

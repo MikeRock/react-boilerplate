@@ -4,25 +4,26 @@ import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import GitRevisionPlugin from 'git-revision-webpack-plugin'
 import noop from 'noop-webpack-plugin'
 import path from 'path'
-import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
-// import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin'
+import { matchesUA } from 'browserslist-useragent'
+import Debug from 'debug'
+import TerserWebpackPlugin from 'terser-webpack-plugin'
+// import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
 import SizePLugin from 'size-plugin'
 import RemoteWebpackPlugin from 'save-remote-file-webpack-plugin'
 import workbox from 'workbox-webpack-plugin'
 import PurgeCssWebpackPlugin from 'purgecss-webpack-plugin'
-import WhitelisterPlugin from 'purgecss-whitelister'
+// import WhitelisterPlugin from 'purgecss-whitelister'
 import WebappWebpackPlugin from 'webapp-webpack-plugin'
 import WebpackMonitor from 'webpack-monitor'
 import WebpackNotifier from 'webpack-notifier'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import WorkerPlugin from 'worker-plugin'
-// import SWPrecachePlugin from 'sw-precache-webpack-plugin'
 import PreloadPlugin from 'preload-webpack-plugin'
 // import InlineManifestPlugin from 'inline-manifest-webpack-plugin'
+import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin'
 import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
 import CleanWebpackPlugin from 'clean-webpack-plugin'
 import WebpackManifestPlugin from 'webpack-manifest-plugin'
-// import PurifyCSSPlugin from 'purifycss-webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CrittersPlugin from 'critters-webpack-plugin'
 import CompressionPlugin from 'compression-webpack-plugin'
@@ -35,6 +36,8 @@ import glob from 'glob-all'
 import sassUtils from 'node-sass-utils'
 import incstr from 'incstr'
 
+const isModern = process.env.BROWSERSLIST_ENV === 'modern'
+const debug = Debug('css')
 let localIdentMap = new Map()
 const createUniqueIdGenerator = () => {
   const index = {}
@@ -67,7 +70,7 @@ const _sass = sassUtils(sass)
 const generateScopedName = (localName, resourcePath) => {
   let newIdent
   const [componentName, fileName] = resourcePath.split('/').slice(-2) // Component name if ComponentName/style.scss
-  console.log(fileName)
+  debug(`Generating scoped name for component ${componentName} file ${fileName} : ${localName}`)
   if (/global/.test(fileName)) return localName
   else {
     newIdent = uniqueIdGenerator(componentName) + '_' + uniqueIdGenerator(localName)
@@ -87,7 +90,11 @@ const GitRev = new GitRevisionPlugin()
  * @type {(env:any, argv: any) => webpack.Configuration}
  */
 const config = () => ({
-  entry: './src/js/App.js',
+  entry: {
+    app: './src/js/App.js',
+    'polyfill.modern': './helpers/polyfill.modern.js',
+    'polyfill.legacy': './helpers/polyfill.legacy.js'
+  },
   resolveLoader: {
     alias: {
       'custom-loader': path.resolve(__dirname, 'loaders/custom-loader.js'),
@@ -97,7 +104,7 @@ const config = () => ({
   output: {
     filename: path.join('./js', '[name].[chunkhash:5].js'),
     publicPath: '/',
-    path: path.resolve(__dirname, './../public'),
+    path: path.resolve(__dirname, `./../public/${process.env.BROWSERSLIST_ENV}`),
     chunkFilename: path.join('./js', '[name].[chunkhash:5].js')
   },
   optimization: {
@@ -111,7 +118,7 @@ const config = () => ({
       cacheGroups: {
         vendors: {
           chunks: 'all',
-          test: /[\\/]node_modules[\\/]/,
+          test: /[\\/]node_modules[\\/](react(-dom)?)/,
           name(module) {
             // get the name. E.g. node_modules/packageName/not/this/part.js
             // or node_modules/packageName
@@ -129,15 +136,15 @@ const config = () => ({
       }
     },
     minimizer: [
-      new UglifyJsPlugin({
+      new TerserWebpackPlugin({
         cache: true,
         parallel: true,
         sourceMap: true, // set to true if you want JS source maps
-        uglifyOptions: {
-          ecma: 5,
+        terserOptions: {
+          // ecma: isModern ? 6 : 5,
           warnings: true,
           mangle: false,
-          keep_fnames: true,
+         // keep_fnames: true,
           output: {
             beautify: true,
             comments: false
@@ -150,7 +157,7 @@ const config = () => ({
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   resolve: {
     alias: { global: path.resolve(__dirname, 'test.global.scss') },
-    extensions: ['.js', '.ts', '.tsx', '.scss', '.css', '.md']
+    extensions: ['.js', '.mjs', '.ts', '.tsx', '.scss', '.css', '.md']
   },
   module: {
     rules: [
@@ -313,28 +320,52 @@ const config = () => ({
         ]
       },
       {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        use: [
+        oneOf: [
           {
-            loader: 'babel-loader',
-            options: {
-              babelrc: false,
-              extends: path.resolve(__dirname, './../.babelrc'),
-              plugins: [
-                [
-                  'babel-plugin-react-css-modules',
-                  {
-                    generateScopedName,
-                    filetypes: {
-                      '.scss': {
-                        syntax: 'postcss-scss'
-                      }
+            test: /prerender\.jsx?$/,
+            exclude: /node_modules/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                babelrc: false,
+                presets: ['@babel/preset-env', '@babel/preset-react'],
+                plugins: [
+                  [
+                    '@babel/plugin-transform-runtime',
+                    {
+                      regenerator: true,
+                      sourceType: 'script'
                     }
-                  }
+                  ]
                 ]
-              ]
+              }
             }
+          },
+          {
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: 'babel-loader',
+                options: {
+                  babelrc: false,
+                  extends: path.resolve(__dirname, './../.babelrc'),
+                  plugins: [
+                    [
+                      'babel-plugin-react-css-modules',
+                      {
+                        generateScopedName,
+                        filetypes: {
+                          '.scss': {
+                            syntax: 'postcss-scss'
+                          }
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            ]
           }
         ]
       },
@@ -354,14 +385,17 @@ const config = () => ({
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(['public'], {
-      root: process.cwd()
-    }),
+    true
+      ? noop()
+      : new CleanWebpackPlugin(['public'], {
+          root: process.cwd()
+        }),
     GitRev.gitWorkTree ? new webpack.BannerPlugin({ banner: `COMMIT ${GitRev.commithash()}` }) : noop(),
     new webpack.DefinePlugin({
       // NODE_ENV defined already with mode set
       'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        BROWSERSLIST_ENV: JSON.stringify(process.env.BROWSERSLIST_ENV)
       }
     }),
     new WebpackPWAManifest({
@@ -424,23 +458,13 @@ const config = () => ({
     process.env.NODE_ENV === 'development'
       ? new WebpackMonitor({
           capture: true, // -> default 'true'
-          target: '../monitor/monitorStats.json', // default -> '../monitor/stats.json'
+          target: path.resolve(process.cwd(), 'webpack/logs/stats.json'), // default -> '../monitor/stats.json'
           launch: false, // -> default 'false'
           port: 3030, // default -> 8081
           excludeSourceMaps: true // default 'true'
         })
       : noop(),
     // new CrittersPlugin(),
-    /*
-    new SWPrecachePlugin({
-      cacheId: 'v1',
-      // dontCacheBustUrlsMatching: /\.\w{8}\./,
-      filename: 'service-worker.js',
-      minify: false,
-      navigateFallback: 'index.html',
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/]
-    })
-    */
 
     /** @type {any} **/ (() =>
       new workbox.GenerateSW({
@@ -501,13 +525,24 @@ const config = () => ({
       whitelistPatterns: [/unused/]
     }),
     new SizePLugin(),
+    new ScriptExtHtmlWebpackPlugin({
+      module: /modern/,
+      custom: [
+        {
+          test: /legacy/,
+          attribute: 'nomodule'
+        }
+      ]
+    })
     // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Uncomment if using Moment.js
-    new InterpolateHtmlPlugin(process.env),
-
+    // new InterpolateHtmlPlugin(process.env),
+    /*
     new BundleAnalyzerPlugin({
+      openAnalyzer: false,
       analyzerPort: 8080
     })
+    */
   ]
 })
-console.log(path.resolve(process.cwd(), './src/js/**/*.js'))
+
 export default config

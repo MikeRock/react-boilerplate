@@ -1,0 +1,1 @@
+if (! "IntersectionObserver" in window) require('intersection-observer')
