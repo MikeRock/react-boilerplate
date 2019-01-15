@@ -6,6 +6,7 @@ import noop from 'noop-webpack-plugin'
 import path from 'path'
 import { matchesUA } from 'browserslist-useragent'
 import Debug from 'debug'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import TerserWebpackPlugin from 'terser-webpack-plugin'
 // import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
 import SizePLugin from 'size-plugin'
@@ -144,7 +145,7 @@ const config = () => ({
           // ecma: isModern ? 6 : 5,
           warnings: true,
           mangle: false,
-         // keep_fnames: true,
+          // keep_fnames: true,
           output: {
             beautify: true,
             comments: false
@@ -469,13 +470,16 @@ const config = () => ({
     /** @type {any} **/ (() =>
       new workbox.GenerateSW({
         swDest: 'sw.js',
+        precacheManifestFilename: 'js/precache-manifest.[manifestHash].js',
+        importScripts: ['js/workbox-catch-handler.js'],
         clientsClaim: true,
         skipWaiting: true,
-        exclude: [/\.(?:png|jpg|jpeg|svg)$/],
+        offlineGoogleAnalytics: true,
+        exclude: [/\.(?:png|jpg|jpeg|svg)$/, /\.map$/, /^manifest.*\\.js(?:on)?$/],
         runtimeCaching: [
           {
             // Match any request ends with .png, .jpg, .jpeg or .svg.
-            urlPattern: /\.(?:png|jpg|jpeg|svg)$/,
+            urlPattern: /\.(?:png|jpg|jpeg|svg|webp)$/,
 
             // Apply a cache-first strategy.
             handler: 'cacheFirst',
@@ -507,6 +511,12 @@ const config = () => ({
         path: './../public/'
       }
     }),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(process.cwd(), 'helpers/workbox-catch-handler.js'),
+        to: 'js/[name].[ext]'
+      }
+    ]),
     new RemoteWebpackPlugin({
       url: 'https://www.google-analytics.com/analytics.js',
       filepath: 'js/analytics.js'

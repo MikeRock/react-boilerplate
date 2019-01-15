@@ -5,6 +5,8 @@ const MODERN_CONFIG = 'modern'
 // node modules
 const path = require('path')
 const merge = require('webpack-merge')
+const Debug = require('debug')
+const incstr = require('incstr')
 
 // webpack plugins
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -14,13 +16,71 @@ const WebpackNotifierPlugin = require('webpack-notifier')
 // config files
 const pkg = require('./../package.json')
 const settings = require('./webpack.settings.js')
+const debug = Debug('css')
+let localIdentMap = new Map()
+const createUniqueIdGenerator = () => {
+  const index = {}
 
+  const generateNextId = incstr.idGenerator({
+    // Removed "d" letter to avoid accidental "ad" construct.
+    // @see https://medium.com/@mbrevda/just-make-sure-ad-isnt-being-used-as-a-class-name-prefix-or-you-might-suffer-the-wrath-of-the-558d65502793
+    alphabet: 'abcefghijklmnopqrstuvwxyz0123456789'
+  })
+
+  return name => {
+    if (index[name]) {
+      return index[name]
+    }
+    let nextId
+    do {
+      // Class name cannot start with a number.
+      nextId = generateNextId()
+    } while (/^[0-9]/.test(nextId))
+
+    index[name] = generateNextId()
+
+    return index[name]
+  }
+}
+const uniqueIdGenerator = createUniqueIdGenerator()
+const generateScopedName = (localName, resourcePath) => {
+  let newIdent
+  const [componentName, fileName] = resourcePath.split('/').slice(-2) // Component name if ComponentName/style.scss
+  debug(`Generating scoped name for component ${componentName} file ${fileName} : ${localName}`)
+  if (/global/.test(fileName)) return localName
+  else {
+    newIdent = uniqueIdGenerator(componentName) + '_' + uniqueIdGenerator(localName)
+    localIdentMap.set(localName, newIdent)
+  }
+  return newIdent
+}
 // Configure Babel loader
 const configureBabelLoader = () => {
   return {
-    test: /\.js$/,
+    test: /\.jsx?$/,
     exclude: /node_modules/,
-    use: 'babel-loader'
+    use: [
+      {
+        loader: 'babel-loader',
+        options: {
+          babelrc: false,
+          extends: path.resolve(__dirname, './../.babelrc'),
+          plugins: [
+            [
+              'babel-plugin-react-css-modules',
+              {
+                generateScopedName,
+                filetypes: {
+                  '.scss': {
+                    syntax: 'postcss-scss'
+                  }
+                }
+              }
+            ]
+          ]
+        }
+      }
+    ]
   }
 }
 
