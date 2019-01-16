@@ -88,7 +88,7 @@ const configurePostcssLoader = buildType => {
   // Don't generate CSS for the legacy config in development
   if (buildType === LEGACY_CONFIG) {
     return {
-      test: /\.css$/,
+      test: /\.s?css$/,
       loader: 'ignore-loader'
     }
   }

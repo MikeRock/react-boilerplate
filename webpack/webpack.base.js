@@ -1,15 +1,14 @@
 // @ts-check
 import webpack from 'webpack' /* eslint-disable-line */
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
-import GitRevisionPlugin from 'git-revision-webpack-plugin'
 import noop from 'noop-webpack-plugin'
 import path from 'path'
-import { matchesUA } from 'browserslist-useragent'
+import git from 'git-rev-sync'
 import Debug from 'debug'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import TerserWebpackPlugin from 'terser-webpack-plugin'
 // import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
 import SizePLugin from 'size-plugin'
+import moment from 'moment'
 import RemoteWebpackPlugin from 'save-remote-file-webpack-plugin'
 import workbox from 'workbox-webpack-plugin'
 import PurgeCssWebpackPlugin from 'purgecss-webpack-plugin'
@@ -17,6 +16,7 @@ import PurgeCssWebpackPlugin from 'purgecss-webpack-plugin'
 import WebappWebpackPlugin from 'webapp-webpack-plugin'
 import WebpackMonitor from 'webpack-monitor'
 import WebpackNotifier from 'webpack-notifier'
+import WebpackBar from 'webpackbar'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import WorkerPlugin from 'worker-plugin'
 import PreloadPlugin from 'preload-webpack-plugin'
@@ -28,7 +28,6 @@ import WebpackManifestPlugin from 'webpack-manifest-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CrittersPlugin from 'critters-webpack-plugin'
 import CompressionPlugin from 'compression-webpack-plugin'
-import WebpackPWAManifest from 'webpack-pwa-manifest'
 import autoprefixer from 'autoprefixer'
 import postcssClean from 'postcss-clean'
 import rucksack from 'rucksack-css'
@@ -37,9 +36,28 @@ import glob from 'glob-all'
 import sassUtils from 'node-sass-utils'
 import incstr from 'incstr'
 
-const isModern = process.env.BROWSERSLIST_ENV === 'modern'
+// const isModern = process.env.BROWSERSLIST_ENV === 'modern'
+
 const debug = Debug('css')
 let localIdentMap = new Map()
+const configureBanner = () => {
+  return {
+   //  exclude: [/\.s?css$/],
+    banner: [
+      '/*!',
+      ' * @project        ' + pkg.name,
+      ' * @name           ' + '[filebase]',
+      ' * @author         ' + pkg.author.name,
+      ' * @build          ' + moment().format('llll') + ' ET',
+      ' * @release        ' + git.long() + ' [' + git.branch() + ']',
+      ' * @copyright      Copyright (c) ' + moment().format('YYYY') + ' ' + 'Mike Rock',
+      ' *',
+      ' */',
+      ''
+    ].join('\n'),
+    raw: true
+  }
+}
 const createUniqueIdGenerator = () => {
   const index = {}
 
@@ -85,14 +103,15 @@ const theme = {
 }
 const pkg = require('./../package.json')
 const vendors = Object.keys(pkg.dependencies)
-const GitRev = new GitRevisionPlugin()
 
 /**
  * @type {(env:any, argv: any) => webpack.Configuration}
  */
 const config = () => ({
+  profile: true,
+  stats: true,
   entry: {
-    app: './src/js/App.js',
+    app: './src/js/index.js',
     'polyfill.modern': './helpers/polyfill.modern.js',
     'polyfill.legacy': './helpers/polyfill.legacy.js'
   },
@@ -102,6 +121,7 @@ const config = () => ({
       'dominant-loader': path.resolve(__dirname, 'loaders/dominant-loader.js')
     }
   },
+  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'inline-source-map',
   output: {
     filename: path.join('./js', '[name].[chunkhash:5].js'),
     publicPath: '/',
@@ -119,7 +139,7 @@ const config = () => ({
       cacheGroups: {
         vendors: {
           chunks: 'all',
-          test: /[\\/]node_modules[\\/](react(-dom)?)/,
+          test: /[\\/]node_modules[\\/]/,
           name(module) {
             // get the name. E.g. node_modules/packageName/not/this/part.js
             // or node_modules/packageName
@@ -142,13 +162,12 @@ const config = () => ({
         parallel: true,
         sourceMap: true, // set to true if you want JS source maps
         terserOptions: {
-          // ecma: isModern ? 6 : 5,
           warnings: true,
           mangle: false,
           // keep_fnames: true,
           output: {
             beautify: true,
-            comments: false
+            comments: true
           }
         }
       })
@@ -323,26 +342,6 @@ const config = () => ({
       {
         oneOf: [
           {
-            test: /prerender\.jsx?$/,
-            exclude: /node_modules/,
-            use: {
-              loader: 'babel-loader',
-              options: {
-                babelrc: false,
-                presets: ['@babel/preset-env', '@babel/preset-react'],
-                plugins: [
-                  [
-                    '@babel/plugin-transform-runtime',
-                    {
-                      regenerator: true,
-                      sourceType: 'script'
-                    }
-                  ]
-                ]
-              }
-            }
-          },
-          {
             test: /\.jsx?$/,
             exclude: /node_modules/,
             use: [
@@ -391,7 +390,7 @@ const config = () => ({
       : new CleanWebpackPlugin(['public'], {
           root: process.cwd()
         }),
-    GitRev.gitWorkTree ? new webpack.BannerPlugin({ banner: `COMMIT ${GitRev.commithash()}` }) : noop(),
+    new webpack.BannerPlugin(configureBanner()),
     new webpack.DefinePlugin({
       // NODE_ENV defined already with mode set
       'process.env': {
@@ -399,29 +398,9 @@ const config = () => ({
         BROWSERSLIST_ENV: JSON.stringify(process.env.BROWSERSLIST_ENV)
       }
     }),
-    new WebpackPWAManifest({
-      filename: 'manifest.json',
-      name: 'My Progressive Web App',
-      short_name: 'MyPWA',
-      description: 'My awesome Progressive Web App!',
-      background_color: '#ffffff',
-      crossorigin: 'use-credentials' // can be null, use-credentials or anonymous
-      /*
-      icons: [
-        {
-          src: path.resolve('assets/icon.png'),
-          sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
-        },
-        {
-          src: path.resolve('assets/large-icon.png'),
-          size: '1024x1024' // you can also use the specifications pattern
-        }
-      ]
-  */
-    }),
     new WebpackManifestPlugin({
       publicPath: './', // replaces publicPath
-      fileName: 'chunk-manifest.json',
+      fileName: `manifest-${process.env.BROWSERSLIST_ENV}.json`,
       writeToFileEmit: true
     }),
     new HtmlWebpackPlugin({
@@ -465,7 +444,7 @@ const config = () => ({
           excludeSourceMaps: true // default 'true'
         })
       : noop(),
-    // new CrittersPlugin(),
+     new CrittersPlugin(),
 
     /** @type {any} **/ (() =>
       new workbox.GenerateSW({
@@ -475,7 +454,7 @@ const config = () => ({
         clientsClaim: true,
         skipWaiting: true,
         offlineGoogleAnalytics: true,
-        exclude: [/\.(?:png|jpg|jpeg|svg)$/, /\.map$/, /^manifest.*\\.js(?:on)?$/],
+        exclude: [/\.(?:png|jpg|jpeg|svg|webp)$/, /\.map$/, /^manifest.*\\.js(?:on)?$/],
         runtimeCaching: [
           {
             // Match any request ends with .png, .jpg, .jpeg or .svg.
@@ -541,11 +520,17 @@ const config = () => ({
         {
           test: /legacy/,
           attribute: 'nomodule'
+        },
+        {
+          test: /\w+/,
+          attribute: 'crossorigin'
         }
       ]
+    }),
+    new WebpackBar({
+      profile: true,
     })
     // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Uncomment if using Moment.js
-    // new InterpolateHtmlPlugin(process.env),
     /*
     new BundleAnalyzerPlugin({
       openAnalyzer: false,

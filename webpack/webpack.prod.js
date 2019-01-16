@@ -180,7 +180,7 @@ const configureOptimization = buildType => {
           common: false,
           styles: {
             name: settings.vars.cssName,
-            test: /\.(pcss|css)$/,
+            test: /\.(scss|css)$/,
             chunks: 'all',
             enforce: true
           }

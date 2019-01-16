@@ -13,9 +13,6 @@ process.on('unhandledRejection', err => {
   throw err
 })
 
-// Ensure environment variables are read.
-// require('../config/env')
-
 const path = require('path')
 const chalk = require('chalk')
 const fs = require('fs-extra')
@@ -56,7 +53,7 @@ measureFileSizesBeforeBuild(paths.appPublic)
   .then(
     ({ stats, previousFileSizes, warnings }) => {
       if (warnings.length) {
-        console.log(chalk.bgYellow('Compiled with warnings.\n'))
+        console.log(chalk.bgYellow('⚠️  Compiled with warnings.\n'))
         console.log(warnings.join('\n\n'))
         console.log(
           '\nSearch for the ' + chalk.underline(chalk.yellow('keywords')) + ' to learn more about each warning.'
@@ -91,7 +88,7 @@ measureFileSizesBeforeBuild(paths.appPublic)
 
 // Create the production build and print the deployment instructions.
 function build(previousFileSizes) {
-  console.log(`Creating an optimized production build for ${process.env.BROWSERSLIST_ENV} browsers ...`)
+  console.log(`🚀 🚀  Creating an optimized production build for ${process.env.BROWSERSLIST_ENV} browsers ...`)
 
   let compiler = webpack(config)
   return new Promise((resolve, reject) => {

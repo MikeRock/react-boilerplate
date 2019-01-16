@@ -86,7 +86,6 @@ const configureBabelLoader = () => {
 
 // Configure Entries
 const configureEntries = () => {
-  console.log(__dirname)
   let entries = {}
   for (const [key, value] of Object.entries(settings.entries)) {
     entries[key] = path.resolve(__dirname, settings.paths.src.js + value)

@@ -14,14 +14,16 @@
     "amd": true,
     "es6": true
   },
-  "plugins": ["compat", "react", "promise", "security"],
+  "plugins": ["compat"],
   "extends": [
+    "standard",
     "plugin:promise/recommended",
     "plugin:security/recommended",
-    "standard"
+    "plugin:react/recommended",
+    "prettier",
+    "prettier/standard"
   ],
   "rules": {
-    "indent": 1,
     "compat/compat": 1,
     "promise/param-names": 1,
     "space-before-function-paren": 0,

@@ -30,7 +30,7 @@ module.exports = {
     cssName: 'styles'
   },
   entries: {
-    app: 'App.js'
+    app: 'index.js'
   },
   copyWebpackConfig: [
     {

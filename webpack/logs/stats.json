@@ -1,0 +1,558 @@
+[
+  {
+    "timeStamp": 1547541618660,
+    "time": 20727,
+    "hash": "3145ae39e74c1be67324",
+    "errors": [],
+    "size": 2298906,
+    "assets": [
+      {
+        "name": "chunk-manifest.json",
+        "chunks": [],
+        "size": 4967
+      },
+      {
+        "name": "css/main.6bc5218d4de939de509e.css",
+        "chunks": [
+          "main"
+        ],
+        "size": 2
+      },
+      {
+        "name": "img/favicons/android-chrome-144x144.png",
+        "chunks": [],
+        "size": 8393
+      },
+      {
+        "name": "img/favicons/android-chrome-192x192.png",
+        "chunks": [],
+        "size": 12598
+      },
+      {
+        "name": "img/favicons/android-chrome-256x256.png",
+        "chunks": [],
+        "size": 21285
+      },
+      {
+        "name": "img/favicons/android-chrome-36x36.png",
+        "chunks": [],
+        "size": 1618
+      },
+      {
+        "name": "img/favicons/android-chrome-384x384.png",
+        "chunks": [],
+        "size": 36655
+      },
+      {
+        "name": "img/favicons/android-chrome-48x48.png",
+        "chunks": [],
+        "size": 2168
+      },
+      {
+        "name": "img/favicons/android-chrome-512x512.png",
+        "chunks": [],
+        "size": 62412
+      },
+      {
+        "name": "img/favicons/android-chrome-72x72.png",
+        "chunks": [],
+        "size": 3496
+      },
+      {
+        "name": "img/favicons/android-chrome-96x96.png",
+        "chunks": [],
+        "size": 4749
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-1024x1024.png",
+        "chunks": [],
+        "size": 168404
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-114x114.png",
+        "chunks": [],
+        "size": 5761
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-120x120.png",
+        "chunks": [],
+        "size": 6134
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-144x144.png",
+        "chunks": [],
+        "size": 7872
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-152x152.png",
+        "chunks": [],
+        "size": 8664
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-167x167.png",
+        "chunks": [],
+        "size": 9952
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-180x180.png",
+        "chunks": [],
+        "size": 11148
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-57x57.png",
+        "chunks": [],
+        "size": 2518
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-60x60.png",
+        "chunks": [],
+        "size": 2722
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-72x72.png",
+        "chunks": [],
+        "size": 3274
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-76x76.png",
+        "chunks": [],
+        "size": 3473
+      },
+      {
+        "name": "img/favicons/apple-touch-icon-precomposed.png",
+        "chunks": [],
+        "size": 11148
+      },
+      {
+        "name": "img/favicons/apple-touch-icon.png",
+        "chunks": [],
+        "size": 11148
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-1182x2208.png",
+        "chunks": [],
+        "size": 113817
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-1242x2148.png",
+        "chunks": [],
+        "size": 233904
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-1496x2048.png",
+        "chunks": [],
+        "size": 255241
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-1536x2008.png",
+        "chunks": [],
+        "size": 319700
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-320x460.png",
+        "chunks": [],
+        "size": 28200
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-640x1096.png",
+        "chunks": [],
+        "size": 83245
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-640x920.png",
+        "chunks": [],
+        "size": 82249
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-748x1024.png",
+        "chunks": [],
+        "size": 86633
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-750x1294.png",
+        "chunks": [],
+        "size": 105705
+      },
+      {
+        "name": "img/favicons/apple-touch-startup-image-768x1004.png",
+        "chunks": [],
+        "size": 105057
+      },
+      {
+        "name": "img/favicons/browserconfig.xml",
+        "chunks": [],
+        "size": 469
+      },
+      {
+        "name": "img/favicons/coast-228x228.png",
+        "chunks": [],
+        "size": 16087
+      },
+      {
+        "name": "img/favicons/favicon-16x16.png",
+        "chunks": [],
+        "size": 689
+      },
+      {
+        "name": "img/favicons/favicon-32x32.png",
+        "chunks": [],
+        "size": 1351
+      },
+      {
+        "name": "img/favicons/favicon.ico",
+        "chunks": [],
+        "size": 33310
+      },
+      {
+        "name": "img/favicons/firefox_app_128x128.png",
+        "chunks": [],
+        "size": 8452
+      },
+      {
+        "name": "img/favicons/firefox_app_512x512.png",
+        "chunks": [],
+        "size": 76671
+      },
+      {
+        "name": "img/favicons/firefox_app_60x60.png",
+        "chunks": [],
+        "size": 3909
+      },
+      {
+        "name": "img/favicons/manifest.json",
+        "chunks": [],
+        "size": 1365
+      },
+      {
+        "name": "img/favicons/manifest.webapp",
+        "chunks": [],
+        "size": 344
+      },
+      {
+        "name": "img/favicons/mstile-144x144.png",
+        "chunks": [],
+        "size": 8393
+      },
+      {
+        "name": "img/favicons/mstile-150x150.png",
+        "chunks": [],
+        "size": 22716
+      },
+      {
+        "name": "img/favicons/mstile-310x150.png",
+        "chunks": [],
+        "size": 23563
+      },
+      {
+        "name": "img/favicons/mstile-310x310.png",
+        "chunks": [],
+        "size": 70514
+      },
+      {
+        "name": "img/favicons/mstile-70x70.png",
+        "chunks": [],
+        "size": 5154
+      },
+      {
+        "name": "img/favicons/yandex-browser-50x50.png",
+        "chunks": [],
+        "size": 2395
+      },
+      {
+        "name": "img/favicons/yandex-browser-manifest.json",
+        "chunks": [],
+        "size": 161
+      },
+      {
+        "name": "index.html",
+        "chunks": [],
+        "size": 6379
+      },
+      {
+        "name": "js/analytics.2288a7f0b8dafb9384355f3cd86c0e83.js",
+        "chunks": [],
+        "size": 43710
+      },
+      {
+        "name": "js/main.6bc52.js",
+        "chunks": [
+          "main"
+        ],
+        "size": 22822,
+        "miniSize": 22632,
+        "minified": false
+      },
+      {
+        "name": "js/manifest.f231d.js",
+        "chunks": [
+          "manifest"
+        ],
+        "size": 6190,
+        "miniSize": 5485,
+        "minified": false
+      },
+      {
+        "name": "js/vendor.axios.d1674.js",
+        "chunks": [
+          "vendor.axios"
+        ],
+        "size": 51609,
+        "miniSize": 51154,
+        "minified": false
+      },
+      {
+        "name": "js/vendor.react.09866.js",
+        "chunks": [
+          "vendor.react"
+        ],
+        "size": 65821,
+        "miniSize": 65779,
+        "minified": false
+      },
+      {
+        "name": "manifest.json",
+        "chunks": [],
+        "size": 224
+      },
+      {
+        "name": "precache-manifest.838a6695305d94d554d673e0ea119602.js",
+        "chunks": [],
+        "size": 1130
+      },
+      {
+        "name": "sw.js",
+        "chunks": [],
+        "size": 1166
+      }
+    ],
+    "chunks": [
+      {
+        "size": 16961,
+        "files": [
+          "css/main.6bc5218d4de939de509e.css",
+          "js/main.6bc52.js"
+        ],
+        "modules": [
+          {
+            "name": "css ./node_modules/css-loader/dist/cjs.js??ref--6-1!./node_modules/postcss-loader/src??postcss!./node_modules/resolve-url-loader??ref--6-3!./node_modules/sass-loader/lib/loader.js??ref--6-4!./src/scss/index.scss",
+            "size": 41,
+            "id": ""
+          },
+          {
+            "name": "./node_modules/@babel/runtime/helpers/assertThisInitialized.js",
+            "size": 219,
+            "id": "./node_modules/@babel/runtime/helpers/assertThisInitialized.js"
+          },
+          {
+            "name": "./node_modules/@babel/runtime/helpers/inheritsLoose.js",
+            "size": 223,
+            "id": "./node_modules/@babel/runtime/helpers/inheritsLoose.js"
+          },
+          {
+            "name": "./node_modules/@babel/runtime/helpers/interopRequireDefault.js",
+            "size": 145,
+            "id": "./node_modules/@babel/runtime/helpers/interopRequireDefault.js"
+          },
+          {
+            "name": "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js",
+            "size": 640,
+            "id": "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js"
+          },
+          {
+            "name": "./node_modules/is-buffer/index.js",
+            "size": 698,
+            "id": "./node_modules/is-buffer/index.js"
+          },
+          {
+            "name": "./node_modules/node-libs-browser/node_modules/process/browser.js",
+            "size": 5418,
+            "id": "./node_modules/node-libs-browser/node_modules/process/browser.js"
+          },
+          {
+            "name": "./node_modules/object-assign/index.js",
+            "size": 2108,
+            "id": "./node_modules/object-assign/index.js"
+          },
+          {
+            "name": "./node_modules/prop-types/checkPropTypes.js",
+            "size": 3534,
+            "id": "./node_modules/prop-types/checkPropTypes.js"
+          },
+          {
+            "name": "./node_modules/prop-types/lib/ReactPropTypesSecret.js",
+            "size": 314,
+            "id": "./node_modules/prop-types/lib/ReactPropTypesSecret.js"
+          },
+          {
+            "name": "./src/js/App.js",
+            "size": 3547,
+            "id": "./src/js/App.js"
+          },
+          {
+            "name": "./src/scss/index.scss",
+            "size": 74,
+            "id": "./src/scss/index.scss"
+          }
+        ]
+      },
+      {
+        "size": 0,
+        "files": [
+          "js/manifest.f231d.js"
+        ],
+        "modules": []
+      },
+      {
+        "size": 37097,
+        "files": [
+          "js/vendor.axios.d1674.js"
+        ],
+        "modules": [
+          {
+            "name": "./node_modules/axios/index.js",
+            "size": 40,
+            "id": "./node_modules/axios/index.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/adapters/xhr.js",
+            "size": 6170,
+            "id": "./node_modules/axios/lib/adapters/xhr.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/axios.js",
+            "size": 1368,
+            "id": "./node_modules/axios/lib/axios.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/cancel/Cancel.js",
+            "size": 385,
+            "id": "./node_modules/axios/lib/cancel/Cancel.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/cancel/CancelToken.js",
+            "size": 1240,
+            "id": "./node_modules/axios/lib/cancel/CancelToken.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/cancel/isCancel.js",
+            "size": 102,
+            "id": "./node_modules/axios/lib/cancel/isCancel.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/core/Axios.js",
+            "size": 2187,
+            "id": "./node_modules/axios/lib/core/Axios.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/core/InterceptorManager.js",
+            "size": 1251,
+            "id": "./node_modules/axios/lib/core/InterceptorManager.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/core/createError.js",
+            "size": 625,
+            "id": "./node_modules/axios/lib/core/createError.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/core/dispatchRequest.js",
+            "size": 2199,
+            "id": "./node_modules/axios/lib/core/dispatchRequest.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/core/enhanceError.js",
+            "size": 592,
+            "id": "./node_modules/axios/lib/core/enhanceError.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/core/settle.js",
+            "size": 757,
+            "id": "./node_modules/axios/lib/core/settle.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/core/transformData.js",
+            "size": 550,
+            "id": "./node_modules/axios/lib/core/transformData.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/defaults.js",
+            "size": 2432,
+            "id": "./node_modules/axios/lib/defaults.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/bind.js",
+            "size": 256,
+            "id": "./node_modules/axios/lib/helpers/bind.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/btoa.js",
+            "size": 986,
+            "id": "./node_modules/axios/lib/helpers/btoa.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/buildURL.js",
+            "size": 1549,
+            "id": "./node_modules/axios/lib/helpers/buildURL.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/combineURLs.js",
+            "size": 380,
+            "id": "./node_modules/axios/lib/helpers/combineURLs.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/cookies.js",
+            "size": 1365,
+            "id": "./node_modules/axios/lib/helpers/cookies.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/isAbsoluteURL.js",
+            "size": 563,
+            "id": "./node_modules/axios/lib/helpers/isAbsoluteURL.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/isURLSameOrigin.js",
+            "size": 2245,
+            "id": "./node_modules/axios/lib/helpers/isURLSameOrigin.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/normalizeHeaderName.js",
+            "size": 357,
+            "id": "./node_modules/axios/lib/helpers/normalizeHeaderName.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/parseHeaders.js",
+            "size": 1393,
+            "id": "./node_modules/axios/lib/helpers/parseHeaders.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/helpers/spread.js",
+            "size": 564,
+            "id": "./node_modules/axios/lib/helpers/spread.js"
+          },
+          {
+            "name": "./node_modules/axios/lib/utils.js",
+            "size": 7541,
+            "id": "./node_modules/axios/lib/utils.js"
+          }
+        ]
+      },
+      {
+        "size": 62998,
+        "files": [
+          "js/vendor.react.09866.js"
+        ],
+        "modules": [
+          {
+            "name": "./node_modules/react/cjs/react.development.js",
+            "size": 62808,
+            "id": "./node_modules/react/cjs/react.development.js"
+          },
+          {
+            "name": "./node_modules/react/index.js",
+            "size": 190,
+            "id": "./node_modules/react/index.js"
+          }
+        ]
+      }
+    ]
+  }
+]

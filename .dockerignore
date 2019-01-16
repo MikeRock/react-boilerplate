@@ -1,0 +1,13 @@
+node_modules
+coverage
+.DS_STORE
+.nyc_output
+.idea
+build
+logs/*
+!logs/.gitkeep
+public
+caches
+*.log
+.vscode
+.env
