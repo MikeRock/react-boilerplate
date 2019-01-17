@@ -25,6 +25,13 @@
   "env": {
     "test": {
       "plugins": []
+    },
+    "production-google": {
+      "presets": [["@babel/preset-env", {
+        "targets": {
+          "esmodules": true
+        }
+      }]]
     }
   }
 }

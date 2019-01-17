@@ -1,3 +1,3 @@
 export default async () => {
-  return 'TEST'
+  return process.env.NODE_ENV
 }

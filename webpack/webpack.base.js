@@ -3,9 +3,13 @@ import webpack from 'webpack' /* eslint-disable-line */
 import noop from 'noop-webpack-plugin'
 import path from 'path'
 import git from 'git-rev-sync'
+import ExcludeWebpackPlugin from './plugins/ExcludeWebpackPlugin'
 import Debug from 'debug'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
+import BrotliWebpackPlugin from 'brotli-webpack-plugin'
 import TerserWebpackPlugin from 'terser-webpack-plugin'
+import AssetsWebpackPlugin from 'assets-webpack-plugin'
+import ClosurePlugin from 'closure-webpack-plugin'
 // import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin'
 import SizePLugin from 'size-plugin'
 import moment from 'moment'
@@ -36,13 +40,14 @@ import glob from 'glob-all'
 import sassUtils from 'node-sass-utils'
 import incstr from 'incstr'
 
-// const isModern = process.env.BROWSERSLIST_ENV === 'modern'
-
+const isModern = process.env.BROWSERSLIST_ENV === 'modern'
+const isDev = /development/.test(process.env.NODE_ENV)
+const useClosureCompiler = /production-google/.test(process.env.NODE_ENV)
 const debug = Debug('css')
 let localIdentMap = new Map()
 const configureBanner = () => {
   return {
-   //  exclude: [/\.s?css$/],
+    //  exclude: [/\.s?css$/],
     banner: [
       '/*!',
       ' * @project        ' + pkg.name,
@@ -104,12 +109,14 @@ const theme = {
 const pkg = require('./../package.json')
 const vendors = Object.keys(pkg.dependencies)
 
+console.log(process.env.NODE_ENV)
+
 /**
  * @type {(env:any, argv: any) => webpack.Configuration}
  */
 const config = () => ({
   profile: true,
-  stats: true,
+  stats: 'verbose',
   entry: {
     app: './src/js/index.js',
     'polyfill.modern': './helpers/polyfill.modern.js',
@@ -121,7 +128,7 @@ const config = () => ({
       'dominant-loader': path.resolve(__dirname, 'loaders/dominant-loader.js')
     }
   },
-  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'inline-source-map',
+  devtool: /production/.test(process.env.NODE_ENV) ? 'source-map' : 'inline-source-map',
   output: {
     filename: path.join('./js', '[name].[chunkhash:5].js'),
     publicPath: '/',
@@ -157,7 +164,22 @@ const config = () => ({
       }
     },
     minimizer: [
-      new TerserWebpackPlugin({
+        useClosureCompiler && new ClosurePlugin(
+          {
+            mode: 'STANDARD',
+            output: {
+              filename: path.join('./js', '[name].google.[chunkhash:5].js')
+            }
+          },
+          {
+            formatting: 'PRETTY_PRINT',
+           // jsCode: [{path:"app.+"}],
+            languageOut: isModern ? 'ECMASCRIPT_2015' : 'ECMASCRIPT5',
+            debug: true,
+            renaming: false
+          }
+        ),
+      !useClosureCompiler && new TerserWebpackPlugin({
         cache: true,
         parallel: true,
         sourceMap: true, // set to true if you want JS source maps
@@ -171,10 +193,10 @@ const config = () => ({
           }
         }
       })
-    ]
+    ].filter(Boolean)
   },
   target: 'web',
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  mode: /production/.test(process.env.NODE_ENV) ? 'production' : 'development',
   resolve: {
     alias: { global: path.resolve(__dirname, 'test.global.scss') },
     extensions: ['.js', '.mjs', '.ts', '.tsx', '.scss', '.css', '.md']
@@ -233,7 +255,7 @@ const config = () => ({
                 [
                   autoprefixer(),
                   rucksack(),
-                  process.env.NODE_ENV === 'production' && postcssClean({ level: 2 })
+                  /production/.test(process.env.NODE_ENV) && postcssClean({ level: 2 })
                 ].filter(Boolean)
             }
           },
@@ -287,7 +309,7 @@ const config = () => ({
                 [
                   autoprefixer(),
                   rucksack(),
-                  process.env.NODE_ENV === 'production' && postcssClean({ level: 2 })
+                 /production/.test(process.env.NODE_ENV) && postcssClean({ level: 2 })
                 ].filter(Boolean)
             }
           },
@@ -400,7 +422,7 @@ const config = () => ({
     }),
     new WebpackManifestPlugin({
       publicPath: './', // replaces publicPath
-      fileName: `manifest-${process.env.BROWSERSLIST_ENV}.json`,
+      fileName: `manifest.${process.env.BROWSERSLIST_ENV}.json`,
       writeToFileEmit: true
     }),
     new HtmlWebpackPlugin({
@@ -414,6 +436,8 @@ const config = () => ({
         preserveLineBreaks: false
       }
     }),
+    new ExcludeWebpackPlugin({patterns:[/(?<!(app))\.google/]}),
+
     new PreloadPlugin({
       rel: 'preload',
       include: 'allAssets',
@@ -428,14 +452,14 @@ const config = () => ({
     new MiniCSSExtractPlugin({
       filename: path.join('./css', '[name].[chunkhash].css')
     }),
-    process.env.NODE_ENV === 'production'
+    !isDev
       ? new CompressionPlugin({
           test: /\.js(\?[=\w]+)?$/i,
           filename: '[path].gz[query]',
           compressionOptions: { level: 5 }
         })
       : noop(),
-    process.env.NODE_ENV === 'development'
+    isDev
       ? new WebpackMonitor({
           capture: true, // -> default 'true'
           target: path.resolve(process.cwd(), 'webpack/logs/stats.json'), // default -> '../monitor/stats.json'
@@ -444,7 +468,7 @@ const config = () => ({
           excludeSourceMaps: true // default 'true'
         })
       : noop(),
-     new CrittersPlugin(),
+    new CrittersPlugin(),
 
     /** @type {any} **/ (() =>
       new workbox.GenerateSW({
@@ -514,6 +538,12 @@ const config = () => ({
       whitelistPatterns: [/unused/]
     }),
     new SizePLugin(),
+    !isDev ? new BrotliWebpackPlugin({
+      asset: '[path].br[query]',
+      test: /\.(js|css|svg)$/,
+      threshold: 10240,
+      minRatio: 0.8
+    }) : noop(),
     new ScriptExtHtmlWebpackPlugin({
       module: /modern/,
       custom: [
@@ -523,12 +553,18 @@ const config = () => ({
         },
         {
           test: /\w+/,
-          attribute: 'crossorigin'
+          attribute: 'crossorigin',
+          vaule: 'use-credentials'
         }
       ]
     }),
+    new AssetsWebpackPlugin({
+      prettyPrint: true,
+      filename: `assets-manifest.${process.env.BROWSERSLIST_ENV}.json`,
+      path: path.resolve(process.cwd(), 'public')
+    }),
     new WebpackBar({
-      profile: true,
+      profile: true
     })
     // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), // Uncomment if using Moment.js
     /*
