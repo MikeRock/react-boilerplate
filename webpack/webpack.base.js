@@ -23,6 +23,7 @@ import WebpackNotifier from 'webpack-notifier'
 import WebpackBar from 'webpackbar'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import WorkerPlugin from 'worker-plugin'
+import GrapgQLLoader from 'graphql-tag/loader'
 import PreloadPlugin from 'preload-webpack-plugin'
 // import InlineManifestPlugin from 'inline-manifest-webpack-plugin'
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin'
@@ -164,7 +165,8 @@ const config = () => ({
       }
     },
     minimizer: [
-        useClosureCompiler && new ClosurePlugin(
+      useClosureCompiler &&
+        new ClosurePlugin(
           {
             mode: 'STANDARD',
             output: {
@@ -173,26 +175,27 @@ const config = () => ({
           },
           {
             formatting: 'PRETTY_PRINT',
-           // jsCode: [{path:"app.+"}],
+            // jsCode: [{path:"app.+"}],
             languageOut: isModern ? 'ECMASCRIPT_2015' : 'ECMASCRIPT5',
             debug: true,
             renaming: false
           }
         ),
-      !useClosureCompiler && new TerserWebpackPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true, // set to true if you want JS source maps
-        terserOptions: {
-          warnings: true,
-          mangle: false,
-          // keep_fnames: true,
-          output: {
-            beautify: true,
-            comments: true
+      !useClosureCompiler &&
+        new TerserWebpackPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: true, // set to true if you want JS source maps
+          terserOptions: {
+            warnings: true,
+            mangle: false,
+            // keep_fnames: true,
+            output: {
+              beautify: true,
+              comments: true
+            }
           }
-        }
-      })
+        })
     ].filter(Boolean)
   },
   target: 'web',
@@ -203,6 +206,7 @@ const config = () => ({
   },
   module: {
     rules: [
+      { test: /\.(gql|graphql)$/, exclude: /node_modules/, use: GrapgQLLoader },
       { test: /\.md$/, exclude: /node_modules/, use: ['html-loader', 'markdown-loader'] },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
@@ -309,7 +313,7 @@ const config = () => ({
                 [
                   autoprefixer(),
                   rucksack(),
-                 /production/.test(process.env.NODE_ENV) && postcssClean({ level: 2 })
+                  /production/.test(process.env.NODE_ENV) && postcssClean({ level: 2 })
                 ].filter(Boolean)
             }
           },
@@ -436,7 +440,7 @@ const config = () => ({
         preserveLineBreaks: false
       }
     }),
-    new ExcludeWebpackPlugin({patterns:[/(?<!(app))\.google/]}),
+    new ExcludeWebpackPlugin({ patterns: [/(?<!(app))\.google/] }),
 
     new PreloadPlugin({
       rel: 'preload',
@@ -469,7 +473,9 @@ const config = () => ({
         })
       : noop(),
     new CrittersPlugin(),
-
+    new webpack.ProvidePlugin({
+      React: 'react'
+    }),
     /** @type {any} **/ (() =>
       new workbox.GenerateSW({
         swDest: 'sw.js',
@@ -538,12 +544,14 @@ const config = () => ({
       whitelistPatterns: [/unused/]
     }),
     new SizePLugin(),
-    !isDev ? new BrotliWebpackPlugin({
-      asset: '[path].br[query]',
-      test: /\.(js|css|svg)$/,
-      threshold: 10240,
-      minRatio: 0.8
-    }) : noop(),
+    !isDev
+      ? new BrotliWebpackPlugin({
+          asset: '[path].br[query]',
+          test: /\.(js|css|svg)$/,
+          threshold: 10240,
+          minRatio: 0.8
+        })
+      : noop(),
     new ScriptExtHtmlWebpackPlugin({
       module: /modern/,
       custom: [

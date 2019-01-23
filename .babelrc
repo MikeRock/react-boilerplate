@@ -14,6 +14,7 @@
         }
       }
     }], */
+    "macros",
     ["@babel/plugin-transform-runtime", {
       "regenerator": true,
       "sourceType": "script"

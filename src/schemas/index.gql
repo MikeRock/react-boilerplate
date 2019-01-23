@@ -1,0 +1,9 @@
+{
+  query Base {
+    view {
+      ... on Api {
+
+      }
+    }
+  }
+}
