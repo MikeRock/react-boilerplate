@@ -169,14 +169,25 @@
     "worker-plugin": "^3.0.0"
   },
   "dependencies": {
+    "apollo-cache-inmemory": "^1.4.2",
+    "apollo-client": "^2.4.12",
+    "apollo-link": "^1.2.6",
+    "apollo-link-error": "^1.1.5",
+    "apollo-link-rest": "^0.7.0",
     "axios": "^0.18.0",
     "debug": "^4.1.1",
+    "graphql": "^14.1.1",
+    "graphql-anywhere": "^4.1.27",
+    "graphql-tag": "^2.10.1",
     "i18next": "^13.1.2",
     "i18next-browser-languagedetector": "^2.2.4",
     "i18next-xhr-backend": "^1.5.1",
     "intersection-observer": "^0.5.1",
+    "node-fetch": "^2.3.0",
     "react": "^16.6.0",
+    "react-apollo": "^2.4.0",
     "react-dom": "^16.6.0",
+    "react-helmet": "^5.2.0",
     "whatwg-fetch": "^3.0.0"
   }
 }

@@ -35,7 +35,7 @@ const categoriesUrls = getAllCategoriesForListing({data})
 
 const sitemap = sm.createSitemap({
     hostname: 'https://bernardodiasdacruz.com',
-    cacheTime: 600000, //600 sec (10 min) cache purge period
+    cacheTime: 600000, // 600 sec (10 min) cache purge period
     urls: [
       { url: '/', changefreq: 'weekly', priority: 1 },
       { url: '/archive', changefreq: 'weekly', priority: 0.5 },
