@@ -1,61 +1,82 @@
+// @ts-check
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import ApolloClient from 'apollo-client'
-import InMemoryCache from 'apollo-cache-inmemory'
+import { InMemoryCache } from 'apollo-cache-inmemory'
 import { RestLink } from 'apollo-link-rest'
-import {print as printSchema} from 'graphql/language/printer'
-import { ApolloLink } from 'apollo-link'
-import {onError} from 'apollo-link-error'
+import { print as printSchema } from 'graphql/language/printer'
+import { ApolloLink, from, execute, Observable } from 'apollo-link'
+import { onError } from 'apollo-link-error'
 import { ApolloProvider, graphql as withGraph } from 'react-apollo'
 import customFetch from 'node-fetch'
 import fragmentMatcher from './fragmentMatcher'
 
+/**
+ * @typedef { import("apollo-client/ApolloClient").DefaultOptions } DefaultOptions
+ * @typedef { import("apollo-link-rest/restLink").RestLink.CustomFetch} CustomFetch
+ * @typedef { import("apollo-link-error").ErrorLink.ErrorHandler } ErrorHandler
+ */
+
 const links = new Set()
 const restLink = new RestLink({
   uri: process.env.REST_API_ENDPOINIT,
-  customFetch, // TODO test with axios
+  customFetch: /** @type {any} */ (customFetch), // TODO check why generates TS linting error
   credentials: 'same-origin'
 })
 
-const errorLink = onError(({ graphQLErrors, networkError, context, forward }) => {
-  if (graphQLErrors) {
-    graphQLErrors.map(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-      ),
-    );
-  }
 
-  if (networkError) {
-    console.log(`[Network error]: ${networkError}`);
-  }
-})
-
-links.add(errorLink)
+const errorLink = errorHandler =>
+  onError(({ graphQLErrors, networkError, operation, forward }) => {
+    if (networkError) {
+      errorHandler(`[Network error]: ${networkError}`)
+    }
+    if (graphQLErrors && graphQLErrors.filter(Boolean).length > 0) {
+      graphQLErrors.forEach(({ message = '', locations, path }, index) => {
+        errorHandler(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+      })
+      // TODO Retry logic + token getter
+      if (graphQLErrors.some(({ extensions }) => extensions.code === 'UNAUTHENTICATED')) {
+        operation.setContext(oldContext => ({
+          headers: {
+            ...oldContext.headers,
+            authorization: localStorage.getItem( /** @type {string} */ (process.env.AUTH_TOKEN_NAME)) || null
+          }
+        }))
+        return forward(operation)
+      }
+    }
+  })
+const defaultErrorHandler = console.log
+links.add(errorLink(defaultErrorHandler))
 links.add(restLink)
 
+/**
+ * @type { DefaultOptions }
+ */
 const defaultOptions = {
   watchQuery: {
     fetchPolicy: 'cache-and-network',
-    errorPolicy: 'ignore',
+    errorPolicy: 'ignore'
   },
   query: {
     fetchPolicy: 'network-only',
-    errorPolicy: 'all',
+    errorPolicy: 'all'
   },
   mutate: {
     errorPolicy: 'all'
   }
 }
-
-const client = ApolloClient({
+/**
+ * @type { ApolloClient }
+ */
+const client = new ApolloClient({
   ssrMode: true,
   ssrForceFetchDelay: 100,
-  connectToDevTools: process.env.NODE_ENV === "development",
+  connectToDevTools: process.env.NODE_ENV === 'development',
   defaultOptions,
-  link: ApolloLink.from(Array.from(links)),
+  link: from(Array.from(links)),
   cache: new InMemoryCache({
-    dataIdFromObject: o => o.id,
+    dataIdFromObject: o => `${o.__typename}_${o.id}`,
     fragmentMatcher
   })
 })

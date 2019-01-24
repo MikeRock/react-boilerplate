@@ -422,7 +422,8 @@ const config = () => ({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
         BROWSERSLIST_ENV: JSON.stringify(process.env.BROWSERSLIST_ENV)
-      }
+      },
+      "__BROWSER__": JSON.stringify(true)
     }),
     new WebpackManifestPlugin({
       publicPath: './', // replaces publicPath

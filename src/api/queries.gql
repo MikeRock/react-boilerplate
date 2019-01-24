@@ -1,0 +1,3 @@
+query swapi {
+person @rest(type:"Person", method: "GET", path:"people/1/")
+}
