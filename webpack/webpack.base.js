@@ -206,6 +206,7 @@ const config = () => ({
   },
   module: {
     rules: [
+      { test: /\.tsx?$/, exclude: /node_modules/, use: 'awesome-typescript-loader' },
       { test: /\.(gql|graphql)$/, exclude: /node_modules/, use: GrapgQLLoader },
       { test: /\.md$/, exclude: /node_modules/, use: ['html-loader', 'markdown-loader'] },
       {
@@ -423,7 +424,7 @@ const config = () => ({
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
         BROWSERSLIST_ENV: JSON.stringify(process.env.BROWSERSLIST_ENV)
       },
-      "__BROWSER__": JSON.stringify(true)
+      __BROWSER__: JSON.stringify(true)
     }),
     new WebpackManifestPlugin({
       publicPath: './', // replaces publicPath
