@@ -10,11 +10,11 @@
   },
   "license": "ISC",
   "author": {
-    "name": "Example Developer",
-    "email": "someone@example-developer.com",
-    "url": "https://example-developer.com"
+    "name": "Mike Rock",
+    "email": "mkaminski3@pl.sii.eu",
+    "url": "https://mikerock.pl"
   },
-  "description": "React boilerplate and testing config",
+  "description": "React NEO",
   "main": "index.js",
   "husky": {
     "hooks": {
@@ -30,6 +30,7 @@
     }
   },
   "scripts": {
+    "generate:types": "gql-gen",
     "prod": "rm -rf public && npm run prod:legacy && npm run prod:modern",
     "prod:legacy": "BROWSERSLIST_ENV=\"legacy\" node_modules/.bin/babel-node webpack/scripts/build.js",
     "prod:modern": "BROWSERSLIST_ENV=\"modern\" node_modules/.bin/babel-node webpack/scripts/build.js",
@@ -106,6 +107,9 @@
     "glob": "^7.1.3",
     "glob-all": "^3.1.0",
     "google-closure-compiler": "^20181231.0.0-webpack-beta",
+    "graphql-code-generator": "^0.18.0",
+    "graphql-codegen-typescript-common": "^0.18.0",
+    "graphql-codegen-typescript-server": "^0.18.0",
     "html-webpack-plugin": "^3.2.0",
     "husky": "^1.3.1",
     "ignore-loader": "^0.1.2",

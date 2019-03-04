@@ -1,10 +1,8 @@
-
-/*global __PATH_PREFIX__ */
-import PropTypes from "prop-types"
-import React from "react"
-import { Link } from "@reach/router"
-import { parsePath } from "gatsby"
-
+/* global __PATH_PREFIX__ */
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Link as RouterLink } from '@reach/router'
+// TODO: Add __PATH__PREFIX__ via webpack
 export function withPrefix(path) {
   return normalizePath(`${__PATH_PREFIX__}/${path}`)
 }
@@ -15,7 +13,7 @@ function normalizePath(path) {
 
 const NavLinkPropTypes = {
   activeClassName: PropTypes.string,
-  activeStyle: PropTypes.object,
+  activeStyle: PropTypes.object
 }
 
 // Set up IntersectionObserver
@@ -37,7 +35,7 @@ const handleIntersection = (el, cb) => {
   io.observe(el)
 }
 
-class GatsbyLink extends React.Component {
+class Link extends React.Component {
   constructor(props) {
     super(props)
     // Default to no support for IntersectionObserver
@@ -47,7 +45,7 @@ class GatsbyLink extends React.Component {
     }
 
     this.state = {
-      IOSupported,
+      IOSupported
     }
     this.handleRef = this.handleRef.bind(this)
   }
@@ -55,14 +53,14 @@ class GatsbyLink extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     // Preserve non IO functionality if no support
     if (this.props.to !== prevProps.to && !this.state.IOSupported) {
-      ___loader.enqueue(parsePath(this.props.to).pathname)
+      //TODO: Handle case if IO NOT supported
     }
   }
 
   componentDidMount() {
     // Preserve non IO functionality if no support
     if (!this.state.IOSupported) {
-      ___loader.enqueue(parsePath(this.props.to).pathname)
+      //TODO: Handle case if IO NOT supported
     }
   }
 
@@ -74,7 +72,7 @@ class GatsbyLink extends React.Component {
     if (this.state.IOSupported && ref) {
       // If IO supported and element reference found, setup Observer functionality
       handleIntersection(ref, () => {
-        ___loader.enqueue(parsePath(this.props.to).pathname)
+        //TODO: Handle case if IO supported and element reference found
       })
     }
   }
@@ -82,10 +80,8 @@ class GatsbyLink extends React.Component {
   defaultGetProps = ({ isCurrent }) => {
     if (isCurrent) {
       return {
-        className: [this.props.className, this.props.activeClassName]
-          .filter(Boolean)
-          .join(` `),
-        style: { ...this.props.style, ...this.props.activeStyle },
+        className: [this.props.className, this.props.activeClassName].filter(Boolean).join(` `),
+        style: { ...this.props.style, ...this.props.activeStyle }
       }
     }
     return null
@@ -110,14 +106,14 @@ class GatsbyLink extends React.Component {
     const LOCAL_URL = /^\/(?!\/)/
     if (process.env.NODE_ENV !== `production` && !LOCAL_URL.test(to)) {
       console.warn(
-        `External link ${to} was detected in a Link component. Use the Link component only for internal links. See: https://gatsby.app/internal-links`
+        `External link ${to} was detected in a Link component. Use the Link component only for internal links.`
       )
     }
 
     const prefixedTo = withPrefix(to)
 
     return (
-      <Link
+      <RouterLink
         to={prefixedTo}
         state={state}
         getProps={getProps}
@@ -126,7 +122,7 @@ class GatsbyLink extends React.Component {
           if (onMouseEnter) {
             onMouseEnter(e)
           }
-          ___loader.hovering(parsePath(to).pathname)
+          // TODO: Handle case if HOVERED
         }}
         onClick={e => {
           if (onClick) {
@@ -157,26 +153,22 @@ class GatsbyLink extends React.Component {
   }
 }
 
-GatsbyLink.propTypes = {
+Link.propTypes = {
   ...NavLinkPropTypes,
   innerRef: PropTypes.func,
   onClick: PropTypes.func,
   to: PropTypes.string.isRequired,
-  replace: PropTypes.bool,
+  replace: PropTypes.bool
 }
 
-export default React.forwardRef((props, ref) => (
-  <GatsbyLink innerRef={ref} {...props} />
-))
+export default React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />)
 
 export const navigate = (to, options) => {
   window.___navigate(withPrefix(to), options)
 }
 
 export const push = to => {
-  console.warn(
-    `The "push" method is now deprecated and will be removed in Gatsby v3. Please use "navigate" instead.`
-  )
+  console.warn(`The "push" method is now deprecated and will be removed in Gatsby v3. Please use "navigate" instead.`)
   window.___push(withPrefix(to))
 }
 
@@ -187,7 +179,6 @@ export const replace = to => {
   window.___replace(withPrefix(to))
 }
 
-// TODO: Remove navigateTo for Gatsby v3
 export const navigateTo = to => {
   console.warn(
     `The "navigateTo" method is now deprecated and will be removed in Gatsby v3. Please use "navigate" instead.`

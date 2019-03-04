@@ -1,0 +1,7 @@
+schema: ./src/api/types/*.gql
+overwrite: true
+generates:
+  ./src/types.d.ts:
+    plugins:
+      - typescript-common
+      - typescript-server

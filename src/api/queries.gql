@@ -1,3 +1,18 @@
-query swapi {
-person @rest(type:"Person", method: "GET", path:"people/1/")
+query getArticle($id: Int!, $siteId: Int!) {
+  article @rest(type: "Article", method: "GET", path: "article/:siteId/:id") {
+    header
+    author
+    sub
+    slug
+  }
+}
+query getArticles($id: Int!, $siteId: Int!) {
+  articles @rest(type: "[Article]", method: "GET", path: "article/:siteId/:id") {
+    article @type("Article") {
+      header
+      author
+      sub
+      slug
+    }
+  }
 }
