@@ -9,6 +9,7 @@ import graphqlHTTP from 'express-graphql'
 import { ApolloServer, gql } from 'apollo-server-express'
 import { makeExecutableSchema } from 'graphql-tools'
 import schemaDirectives from './../src/api/directives'
+import Logger from './Logger'
 
 dotenv.config()
 const PORT = process.env.PORT || 3000
@@ -47,7 +48,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     async allArticles(_, args, context, info) {
-      if (!context.user) throw new Error('Only users can eat cakes.')
+      if (!context.user) throw new Error('Only users can see this.')
       return []
     },
     async getArticle(_, { id }) {
@@ -62,6 +63,14 @@ const resolvers = {
       // TODO: add comment
     }
   }
+}
+const logger = Logger({port: 5000, host: `127.0.0.1`})
+// Override console log to use Winston with optional export to Logstash
+console.log = message => {
+  logger.info(message)
+}
+console.error = message => {
+  logger.error(message)
 }
 
 passport.use(
