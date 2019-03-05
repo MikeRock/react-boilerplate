@@ -1,3 +1,5 @@
+/* global workbox */
+//! NEEDS workbox GLOBAL
 // fallback URLs
 const FALLBACK_HTML_URL = '/offline.html'
 const FALLBACK_IMAGE_URL = '/offline.svg'

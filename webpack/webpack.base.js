@@ -422,7 +422,10 @@ const config = () => ({
       // NODE_ENV defined already with mode set
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        BROWSERSLIST_ENV: JSON.stringify(process.env.BROWSERSLIST_ENV)
+        BROWSERSLIST_ENV: JSON.stringify(process.env.BROWSERSLIST_ENV),
+        REST_URI: JSON.stringify(process.env.REST_URI),
+        GRAPHQL_URI: JSON.stringify(process.env.GRAPHQL_URI),
+        API_TYPE: JSON.stringify(process.env.API_TYPE)
       },
       __BROWSER__: JSON.stringify(true)
     }),

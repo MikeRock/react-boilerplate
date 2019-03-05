@@ -5,12 +5,12 @@
   "browser": "/index.html",
   "homepage": "https://github.com/example-developer/example-project",
   "bugs": {
-    "email": "mikerock@github.com",
+    "email": "mkaminski3@pl.sii.eu",
     "url": "https://github.com/example-developer/example-project/issues"
   },
   "license": "ISC",
   "author": {
-    "name": "Mike Rock",
+    "name": "Maciej Kaminski",
     "email": "mkaminski3@pl.sii.eu",
     "url": "https://mikerock.pl"
   },
@@ -39,7 +39,7 @@
     "wp:dev": "webpack --config ./webpack/webpack.dev.js --mode development",
     "wp:prod": "webpack --config ./webpack/webpack.prod.js --mode production",
     "wp:base": "BROWSERSLIST_ENV=\"legacy\"  node_modules/.bin/babel-node node_modules/.bin/webpack --config webpack/webpack.base.js --mode production",
-    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "start": "npm run generate:types && webpack-dev-server --config ./webpack.config.js --mode development",
     "test:unit": "mocha --require @babel/register --require ./test/helpers.js --require ./test/dom.js --require ignore-styles 'src/**/*.spec.js'",
     "test:unit:watch": "npm run test:unit -- --watch",
     "test:snapshot": "jest --config ./test/jest.config.json",

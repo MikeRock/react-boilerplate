@@ -2,17 +2,22 @@
 
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
-import { ApolloLink, split } from 'apollo-link'
+import { ApolloLink, split, concat } from 'apollo-link'
 import { onError } from 'apollo-link-error'
 import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
+import { RestLink } from 'apollo-link-rest'
 import { getMainDefinition } from 'apollo-utilities'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 
 /* Local */
 import createState from './state'
-
+/* Global declarations */
+declare const __BROWSER__: boolean
 // ----------------------------------------------------------------------------
+
+// TODO: SETUP WEBSOCKET SUPPORT
+const WS_SUBSCRIPTIONS = false
 
 export function createClient(): ApolloClient<NormalizedCacheObject> {
   // Create the cache first, which we'll share across Apollo tooling.
@@ -27,12 +32,16 @@ export function createClient(): ApolloClient<NormalizedCacheObject> {
   // set to an external playground at https://graphqlhub.com/graphql
   const httpLink = new HttpLink({
     credentials: 'same-origin',
-    uri: GRAPHQL
+    uri: process.env.GRAPHQL_URI
   })
 
+  // Rest link for generating REST requests
+  const restLink = new RestLink({
+    uri: process.env.REST_URI
+  })
   // If we're in the browser, we'd have received initial state from the
   // server. Restore it, so the client app can continue with the same data.
-  if (!SERVER) {
+  if (__BROWSER__) {
     cache.restore((window as any).__APOLLO_STATE__)
   }
 
@@ -63,7 +72,7 @@ export function createClient(): ApolloClient<NormalizedCacheObject> {
       createState(cache),
 
       // Split on HTTP and WebSockets
-      WS_SUBSCRIPTIONS && !SERVER
+      WS_SUBSCRIPTIONS && __BROWSER__
         ? split(
             ({ query }) => {
               const definition = getMainDefinition(query)
@@ -72,16 +81,18 @@ export function createClient(): ApolloClient<NormalizedCacheObject> {
             // Use WebSockets for subscriptions
             new WebSocketLink(
               // Replace http(s) with `ws` for connecting via WebSockts
-              new SubscriptionClient(GRAPHQL.replace(/^https?/, 'ws'), {
+              new SubscriptionClient((process.env.GRAPHQL_URI as any).replace(/^https?/, 'ws'), {
                 reconnect: true // <-- automatically redirect as needed
               })
             ),
-            // ... fall-back to HTTP for everything else
-            httpLink
+            // ... fall-back to HTTP/REST for everything else
+            process.env.API_TYPE === 'REST' ? restLink : httpLink
           )
-        : httpLink // <-- just use HTTP on the server
+        : process.env.API_TYPE === 'REST'
+        ? restLink
+        : httpLink // <-- just use HTTP/REST on the server
     ]),
     // On the server, enable SSR mode
-    ssrMode: SERVER
+    ssrMode: !__BROWSER__
   })
 }

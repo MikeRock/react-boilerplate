@@ -1,1 +1,2 @@
-if (! "IntersectionObserver" in window) require('intersection-observer')
+// Return just IntersectionObserver for modern browsers
+if (!'IntersectionObserver' in window) require('intersection-observer')
