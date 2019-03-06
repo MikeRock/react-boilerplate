@@ -1,9 +1,13 @@
 {
   "presets": [
-    ["@babel/preset-env", {
-      "loose": true,
-      "modules": "umd"
-    }], "@babel/preset-react"
+    [
+      "@babel/preset-env",
+      {
+        "loose": true,
+        "modules": "umd"
+      }
+    ],
+    "@babel/preset-react"
   ],
   "plugins": [
     /* ["babel-plugin-react-css-modules", {
@@ -15,24 +19,37 @@
       }
     }], */
     "macros",
-    ["@babel/plugin-transform-runtime", {
-      "regenerator": true,
-      "sourceType": "script"
-    }], "@babel/plugin-proposal-class-properties",
-    ["@babel/plugin-proposal-decorators", {
-      "decoratorsBeforeExport": true
-    }], "@babel/plugin-proposal-object-rest-spread"
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true,
+        "sourceType": "script"
+      }
+    ],
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "decoratorsBeforeExport": true
+      }
+    ],
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread"
   ],
   "env": {
     "test": {
       "plugins": []
     },
     "production-google": {
-      "presets": [["@babel/preset-env", {
-        "targets": {
-          "esmodules": true
-        }
-      }]]
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "esmodules": true
+            }
+          }
+        ]
+      ]
     }
   }
 }

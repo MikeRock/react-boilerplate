@@ -34,16 +34,21 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CrittersPlugin from 'critters-webpack-plugin'
 import CompressionPlugin from 'compression-webpack-plugin'
 import autoprefixer from 'autoprefixer'
+import tailwindcss from 'tailwindcss'
+import postcssNested from 'postcss-nested'
 import postcssClean from 'postcss-clean'
 import rucksack from 'rucksack-css'
 import sass from 'node-sass'
 import glob from 'glob-all'
 import sassUtils from 'node-sass-utils'
 import incstr from 'incstr'
-
-const isModern = process.env.BROWSERSLIST_ENV === 'modern'
-const isDev = /development/.test(process.env.NODE_ENV)
-const useClosureCompiler = /production-google/.test(process.env.NODE_ENV)
+/**
+ * @type {Object}
+ */
+const { NODE_ENV, BROWSERSLIST_ENV, REST_URI, GRAPHQL_URI, API_TYPE } = process.env
+const isModern = BROWSERSLIST_ENV === 'modern'
+const isDev = /development/.test(NODE_ENV)
+const useClosureCompiler = /production-google/.test(NODE_ENV)
 const debug = Debug('css')
 let localIdentMap = new Map()
 const configureBanner = () => {
@@ -92,7 +97,7 @@ const createUniqueIdGenerator = () => {
 }
 const uniqueIdGenerator = createUniqueIdGenerator()
 const _sass = sassUtils(sass)
-const generateScopedName = (localName, resourcePath) => {
+const generateScopedName = (localName, resourcePath, localIdentName) => {
   let newIdent
   const [componentName, fileName] = resourcePath.split('/').slice(-2) // Component name if ComponentName/style.scss
   debug(`Generating scoped name for component ${componentName} file ${fileName} : ${localName}`)
@@ -110,7 +115,7 @@ const theme = {
 const pkg = require('./../package.json')
 const vendors = Object.keys(pkg.dependencies)
 
-console.log(process.env.NODE_ENV)
+console.log(NODE_ENV)
 
 /**
  * @type {(env:any, argv: any) => webpack.Configuration}
@@ -129,11 +134,20 @@ const config = () => ({
       'dominant-loader': path.resolve(__dirname, 'loaders/dominant-loader.js')
     }
   },
-  devtool: /production/.test(process.env.NODE_ENV) ? 'source-map' : 'inline-source-map',
+  devtool: /production/.test(NODE_ENV) ? 'source-map' : 'inline-source-map',
+  devServer: {
+    contentBase: path.resolve(__dirname, `./../public/${BROWSERSLIST_ENV}`),
+    disableHostCheck: true,
+    port: 3000,
+    hot: true,
+    quiet: false,
+    noInfo: false
+    // historyApiFallback: true
+  },
   output: {
-    filename: path.join('./js', '[name].[chunkhash:5].js'),
+    filename: path.join('./js', '[name].[hash:5].js'),
     publicPath: '/',
-    path: path.resolve(__dirname, `./../public/${process.env.BROWSERSLIST_ENV}`),
+    path: path.resolve(__dirname, `./../public/${BROWSERSLIST_ENV}`),
     chunkFilename: path.join('./js', '[name].[chunkhash:5].js')
   },
   optimization: {
@@ -151,6 +165,8 @@ const config = () => ({
           name(module) {
             // get the name. E.g. node_modules/packageName/not/this/part.js
             // or node_modules/packageName
+
+            /* eslint-disable-next-line no-unused-vars */
             const [_, packageName] = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)
 
             // npm package names are URL-safe, but some servers don't like @ symbols
@@ -199,10 +215,10 @@ const config = () => ({
     ].filter(Boolean)
   },
   target: 'web',
-  mode: /production/.test(process.env.NODE_ENV) ? 'production' : 'development',
+  mode: /production/.test(NODE_ENV) ? 'production' : 'development',
   resolve: {
     alias: { global: path.resolve(__dirname, 'test.global.scss') },
-    extensions: ['.js', '.mjs', '.ts', '.tsx', '.scss', '.css', '.md']
+    extensions: ['.js', '.mjs', '.ts', '.tsx', '.scss', '.css', '.less', '.md']
   },
   module: {
     rules: [
@@ -236,7 +252,7 @@ const config = () => ({
         exclude: [/node_modules/, /global/],
         include: '/',
         use: [
-          MiniCSSExtractPlugin.loader,
+          isDev ? { loader: 'style-loader', options: { sourceMap: true } } : MiniCSSExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
@@ -244,11 +260,11 @@ const config = () => ({
               // exportOnlyLocals: true,
               sourceMap: true,
               modules: true,
-
-              getLocalIdent: (context, localIdentName, localName) => {
-                return generateScopedName(localName, context.resourcePath)
-              },
-
+              getLocalIdent: isDev
+                ? false
+                : (context, localIdentName, localName) => {
+                    return generateScopedName(localName, context.resourcePath, localIdentName)
+                  },
               localIdentName: '[name]__[local]__[hash:base64:5]'
             }
           },
@@ -258,9 +274,11 @@ const config = () => ({
               ident: 'postcss',
               plugins: () =>
                 [
+                  tailwindcss(path.resolve(process.cwd(), 'src/tailwind.js')),
+                  postcssNested(),
                   autoprefixer(),
                   rucksack(),
-                  /production/.test(process.env.NODE_ENV) && postcssClean({ level: 2 })
+                  !isDev && postcssClean({ level: 2 })
                 ].filter(Boolean)
             }
           },
@@ -275,7 +293,7 @@ const config = () => ({
             options: {
               sourceMap: true,
               sourceMapContents: false,
-              data: `$themes:(${Object.keys(theme).toString()});$env: ${process.env.NODE_ENV};`,
+              data: `$themes:(${Object.keys(theme).toString()});$env: ${NODE_ENV};`,
               functions: {
                 'theme($what, $name)': (what, name) => {
                   _sass.infect()
@@ -312,9 +330,10 @@ const config = () => ({
               ident: 'postcss',
               plugins: () =>
                 [
+                  tailwindcss(path.resolve(__dirname, './../src/tailwind.js')),
                   autoprefixer(),
                   rucksack(),
-                  /production/.test(process.env.NODE_ENV) && postcssClean({ level: 2 })
+                  /production/.test(NODE_ENV) && postcssClean({ level: 2 })
                 ].filter(Boolean)
             }
           },
@@ -334,6 +353,31 @@ const config = () => ({
               }
             }
           }
+        ]
+      },
+      {
+        test: /\.less(\?[=\w]+)?$/,
+        exclude: /node_modules/,
+        //  include: '/', // path to globals
+        use: [
+          MiniCSSExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2,
+              sourceMap: true,
+              modules: false
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: () =>
+                [autoprefixer(), rucksack(), /production/.test(NODE_ENV) && postcssClean({ level: 2 })].filter(Boolean)
+            }
+          },
+          'less-loader'
         ]
       },
       {
@@ -421,19 +465,21 @@ const config = () => ({
     new webpack.DefinePlugin({
       // NODE_ENV defined already with mode set
       'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        BROWSERSLIST_ENV: JSON.stringify(process.env.BROWSERSLIST_ENV),
-        REST_URI: JSON.stringify(process.env.REST_URI),
-        GRAPHQL_URI: JSON.stringify(process.env.GRAPHQL_URI),
-        API_TYPE: JSON.stringify(process.env.API_TYPE)
+        NODE_ENV: JSON.stringify(NODE_ENV),
+        BROWSERSLIST_ENV: JSON.stringify(BROWSERSLIST_ENV),
+        REST_URI: JSON.stringify(REST_URI),
+        GRAPHQL_URI: JSON.stringify(GRAPHQL_URI),
+        API_TYPE: JSON.stringify(API_TYPE)
       },
       __BROWSER__: JSON.stringify(true)
     }),
-    new WebpackManifestPlugin({
-      publicPath: './', // replaces publicPath
-      fileName: `manifest.${process.env.BROWSERSLIST_ENV}.json`,
-      writeToFileEmit: true
-    }),
+    isDev
+      ? noop()
+      : new WebpackManifestPlugin({
+          publicPath: './', // replaces publicPath
+          fileName: `manifest.${BROWSERSLIST_ENV}.json`,
+          writeToFileEmit: true
+        }),
     new HtmlWebpackPlugin({
       template: `!!prerender-loader?string!${path.resolve(process.cwd(), 'src/templates/template.html')}`,
       filename: 'index.html',
@@ -446,7 +492,6 @@ const config = () => ({
       }
     }),
     new ExcludeWebpackPlugin({ patterns: [/(?<!(app))\.google/] }),
-
     new PreloadPlugin({
       rel: 'preload',
       include: 'allAssets',
@@ -573,7 +618,7 @@ const config = () => ({
     }),
     new AssetsWebpackPlugin({
       prettyPrint: true,
-      filename: `assets-manifest.${process.env.BROWSERSLIST_ENV}.json`,
+      filename: `assets-manifest.${BROWSERSLIST_ENV}.json`,
       path: path.resolve(process.cwd(), 'public')
     }),
     new WebpackBar({
