@@ -1,5 +1,4 @@
 // Apollo GraphQL client
-
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink, split, concat } from 'apollo-link'

@@ -217,7 +217,11 @@ const config = () => ({
   target: 'web',
   mode: /production/.test(NODE_ENV) ? 'production' : 'development',
   resolve: {
-    alias: { global: path.resolve(__dirname, 'test.global.scss') },
+    alias: {
+      'assets:global': path.resolve(__dirname, 'vendor.global.scss'),
+      'assets:css': path.resolve(process.cwd(), 'src/scss'),
+      'assets:js': path.resolve(process.cwd(), 'src/js')
+    },
     extensions: ['.js', '.mjs', '.ts', '.tsx', '.scss', '.css', '.less', '.md']
   },
   module: {

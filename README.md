@@ -2,7 +2,7 @@
 
 ## Features
 
-- React 16.7
+- React 16.8
 - Webpack 4
   - ServiceWorkers
   - Brotli Compression

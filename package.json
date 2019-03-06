@@ -30,7 +30,7 @@
     }
   },
   "scripts": {
-    "tailwind:css":"tailwind build src/scss/tailwind.src.css -c  src/tailwind.js -o src/scss/tailwind.scss",
+    "generate:tailwind": "tailwind build src/scss/tailwind.scss -c  src/tailwind.js -o src/scss/_tailwind.scss",
     "wds": "npm run tailwind:css && NODE_ENV=\"development\" BROWSERSLIST_ENV=\"legacy\" node_modules/.bin/babel-node node_modules/.bin/webpack-dev-server --mode development --config ./webpack/webpack.base.js",
     "generate:types": "gql-gen",
     "prod": "rm -rf public && npm run prod:legacy && npm run prod:modern",
@@ -63,6 +63,8 @@
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.2.0",
     "@types/graphql": "^14.0.5",
+    "@types/react": "^16.8.6",
+    "@types/react-dom": "^16.8.2",
     "assets-webpack-plugin": "^3.9.7",
     "autoprefixer": "^9.4.5",
     "awesome-typescript-loader": "^5.2.1",
