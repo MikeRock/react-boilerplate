@@ -12,7 +12,6 @@ export const doDecrement = prevState => ({
 class App extends Component {
   constructor() {
     super()
-
     this.state = {
       counter: 0,
       asyncCounters: null

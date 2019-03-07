@@ -1,7 +1,78 @@
-:global {
-  @import 'assets:css/tailwind';
+@import '~assets:css/tailwind';
+
+$primary-color: #144161;
+
+.page {
+  &__header {
+    position: relative;
+    overflow: hidden;
+    font-size: 1.2rem;
+    max-width: 1000px;
+    margin: auto;
+    background-color: $primary-color;
+  }
+  &__footer {
+    background-color: $primary-color;
+  }
+  &__main {
+    min-height: 1000px;
+  }
 }
 
-.test {
-  background-color: red;
+.header {
+  position: relative;
+  background-color: $primary-color;
+  padding: 20px;
+  overflow: visible;
+  &__logo {
+    padding-bottom: 50px;
+    background-image: url(~assets:img/bilbransje24-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    max-width: 250px;
+    z-index: 1;
+  }
+  &__search {
+    max-width: 20rem;
+    height: 3.6rem;
+    padding-right: 3.6rem;
+    padding-left: 1rem;
+    color: #111;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fff8f2;
+    border-radius: 8rem;
+    background-repeat: no-repeat;
+    background-position: center right 1.2rem;
+    background-size: 2rem 2rem;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.192 12.606a7 7 0 1 1 1.414-1.414l1.41 1.41a1.991 1.991 0 0 1 1.932.518l2.832 2.831c.78.78.785 2.04-.002 2.827a1.994 1.994 0 0 1-2.827.002l-2.831-2.832a1.994 1.994 0 0 1-.518-1.932l-1.41-1.41zM7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10z' fill ='rgb(20,65,97)'/%3E%3C/svg%3E");
+    border: none;
+    box-shadow: none;
+    z-index: 1;
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    left: -2000px;
+    top: 0;
+    bottom: 0;
+    width: 10000px;
+    background-color: $primary-color;
+    z-index: 0;
+  }
+}
+
+.main {
+  max-width: 1000px;
+  margin: auto;
+  &__page-image {
+    padding: 10px;
+  }
+
+  &__shortnews {
+    overflow: hidden;
+    height: auto;
+  }
+  &__articles {
+    margin-top: 10px;
+  }
 }
