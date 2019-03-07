@@ -1,0 +1,34 @@
+@import '~assets:css/tailwind';
+
+$primary-color: #144161;
+
+.card {
+  &__image {
+    background-image: url(https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg);
+    background-size: contain;
+    background-clip: border-box;
+    background-repeat: no-repeat;
+    padding-bottom: 50%;
+  }
+
+  &__headline {
+    font-size: 1.2rem;
+    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+  }
+  &__headline--top {
+    font-size: 2.2rem;
+  }
+  &__tag {
+    font-family: 'Montserrat', Times, serif;
+    background-color: $primary-color;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    color: #fff;
+    text-transform: uppercase;
+    display: inline-block;
+    pointer-events: none;
+  }
+}

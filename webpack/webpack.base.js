@@ -220,7 +220,8 @@ const config = () => ({
     alias: {
       'assets:global': path.resolve(__dirname, 'vendor.global.scss'),
       'assets:css': path.resolve(process.cwd(), 'src/scss'),
-      'assets:js': path.resolve(process.cwd(), 'src/js')
+      'assets:js': path.resolve(process.cwd(), 'src/js'),
+      'assets:img': path.resolve(process.cwd(), 'src/img')
     },
     extensions: ['.js', '.mjs', '.ts', '.tsx', '.scss', '.css', '.less', '.md']
   },
@@ -269,7 +270,7 @@ const config = () => ({
                 : (context, localIdentName, localName) => {
                     return generateScopedName(localName, context.resourcePath, localIdentName)
                   },
-              localIdentName: '[name]__[local]__[hash:base64:5]'
+              localIdentName: isDev ? '[local]' : '[name]__[local]__[hash:base64:5]'
             }
           },
           {
@@ -396,22 +397,22 @@ const config = () => ({
                 loader: 'responsive-loader',
                 options: {
                   placeholder: false
-                  // outputPath: '/static'
+                  // outputPath: '/public/assets/img'
                 }
               },
               limit: 1000000,
               name: 'img/[sha256:hash:base64:5].[ext]'
               // publicPath: '/'
             }
-          },
-          {
+          }
+          /*  {
             loader: 'image-webpack-loader',
             options: {
               webp: {
                 quality: 75
               }
             }
-          }
+          } */
         ]
       },
       {
@@ -427,9 +428,26 @@ const config = () => ({
                   extends: path.resolve(__dirname, './../.babelrc'),
                   plugins: [
                     [
+                      'module-resolver',
+                      {
+                        root: [path.resolve(process.cwd(), 'src/')],
+                        alias: {
+                          '~assets:global': './scss/vendor.global.scss',
+                          '~assets:css': './scss',
+                          '~assets:js': './js',
+                          '~assets:img': './img'
+                        }
+                      }
+                    ],
+                    [
                       'babel-plugin-react-css-modules',
                       {
-                        generateScopedName,
+                        generateScopedName: isDev
+                          ? localName => {
+                              console.log(`GENERATING ${localName}`)
+                              return localName
+                            }
+                          : generateScopedName,
                         filetypes: {
                           '.scss': {
                             syntax: 'postcss-scss'
@@ -460,11 +478,10 @@ const config = () => ({
     ]
   },
   plugins: [
-    true
-      ? noop()
-      : new CleanWebpackPlugin(['public'], {
-          root: process.cwd()
-        }),
+    false &&
+      new CleanWebpackPlugin(['public'], {
+        root: process.cwd()
+      }),
     new webpack.BannerPlugin(configureBanner()),
     new webpack.DefinePlugin({
       // NODE_ENV defined already with mode set
@@ -561,19 +578,21 @@ const config = () => ({
       }))(),
     new WebpackNotifier({ title: 'Webpack', excludeWarnings: true, alwaysNotify: true }),
     new WorkerPlugin(),
-    new WebappWebpackPlugin({
-      logo: './src/img/favicon-src.png',
-      prefix: 'img/favicons/',
-      cache: false,
-      inject: 'force',
-      favicons: {
-        appName: pkg.name,
-        appDescription: pkg.description,
-        developerName: pkg.author.name,
-        developerURL: pkg.author.url,
-        path: './../public/'
-      }
-    }),
+    !isDev
+      ? new WebappWebpackPlugin({
+          logo: './src/img/favicon-src.png',
+          prefix: 'img/favicons/',
+          cache: false,
+          inject: 'force',
+          favicons: {
+            appName: pkg.name,
+            appDescription: pkg.description,
+            developerName: pkg.author.name,
+            developerURL: pkg.author.url,
+            path: './../public/'
+          }
+        })
+      : noop(),
     new CopyWebpackPlugin([
       {
         from: path.resolve(process.cwd(), 'helpers/workbox-catch-handler.js'),
@@ -635,7 +654,7 @@ const config = () => ({
       analyzerPort: 8080
     })
     */
-  ]
+  ].filter(Boolean)
 })
 
 export default config

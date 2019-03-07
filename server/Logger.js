@@ -7,9 +7,7 @@ const format = [
   winston.format.timestamp({
     format: 'YYYY-MM-DD HH:mm:ss'
   }),
-  winston.format.printf(
-    info => `${info.timestamp} ${info.level}: ${info.message}`
-  )
+  winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
 ]
 const options = {
   file: {
@@ -33,16 +31,17 @@ const options = {
     format: winston.format.combine(...format)
   }
 }
-export default ({port = process.env.WINSTON_PORT, host = process.env.WINSTON_HOST}) => winston.createLogger({
-  level: process.env.NODE_ENV === 'development' ? 'verbose' : 'info',
-  transports: [
-    new winston.transports.File(options.file),
-    new winston.transports.Console(options.console),
-    new LogstashTransport({
-      host,
-      port,
-      ...options.logstash
-    })
-  ],
-  exitOnError: false // do not exit on handled exceptions
-})
+export default ({ port = process.env.WINSTON_PORT, host = process.env.WINSTON_HOST }) =>
+  winston.createLogger({
+    level: process.env.NODE_ENV === 'development' ? 'verbose' : 'info',
+    transports: [
+      new winston.transports.File(options.file),
+      new winston.transports.Console(options.console),
+      new LogstashTransport({
+        host,
+        port,
+        ...options.logstash
+      })
+    ],
+    exitOnError: false // do not exit on handled exceptions
+  })
