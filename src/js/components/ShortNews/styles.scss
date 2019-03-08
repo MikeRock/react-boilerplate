@@ -1,0 +1,50 @@
+.shortnews {
+  padding: 0 20px;
+  margin-bottom: 2rem;
+  width: 320px;
+  border: 1px solid #ddd;
+  font-size: 1.2rem;
+  line-height: normal;
+  font-family: 'Raleway', Helvetica, Arial, sans-serif;
+  height: 100%;
+
+  &__item:nth-child(2) {
+    margin-top: 50px;
+  }
+
+  &__header {
+    color: #fff;
+    background-color: #144161;
+    font-weight: 700;
+    position: absolute;
+    text-align: center;
+    padding: 0.4rem 0.8rem;
+    left: 0;
+    right: 0;
+    font-size: 1.2rem;
+    transform: translateY(-30%);
+    width: 90px;
+    margin: auto;
+    text-transform: uppercase;
+  }
+  &__body {
+    border-top: 1px solid transparent;
+    transform: translateY(-1px);
+    text-align: center;
+    position: relative;
+  }
+
+  &__headline {
+    display: inline-block;
+    border-radius: 0.2rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    background-color: #ddd;
+    padding: 0.2rem 0.6rem;
+    font-family: 'Montserrat', Times, serif;
+  }
+
+  &__paragraph {
+    margin-bottom: 1.6rem;
+  }
+}

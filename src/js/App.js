@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import FrontPage from './components/FrontPage/Front.page'
+import ArticlePage from './components/ArticlePage/Article.page'
 import './../scss/index.scss'
 
 class App extends Component {

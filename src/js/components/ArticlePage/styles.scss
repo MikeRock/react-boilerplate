@@ -1,0 +1,180 @@
+@import '~assets:css/tailwind';
+
+$primary-color: #144161;
+
+:global(.body) {
+  background-color: #fff8f2;
+}
+
+:global(.html) {
+  font-size: 65.8%;
+}
+
+.page {
+  overflow: hidden;
+  &__header {
+    position: relative;
+    overflow: hidden;
+    font-size: 1.2rem;
+    max-width: 1000px;
+    margin: auto;
+    background-color: $primary-color;
+  }
+  &__footer {
+    margin-top: 20px;
+    background-color: $primary-color;
+  }
+  &__main {
+    min-height: 1000px;
+  }
+}
+
+.header {
+  position: relative;
+  background-color: $primary-color;
+  padding: 20px;
+  overflow: visible;
+  &__logo {
+    padding-bottom: 40px;
+    background-image: url(~assets:img/bilbransje24-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    max-width: 250px;
+    z-index: 1;
+  }
+  &__profile-btn {
+    text-align: center;
+    display: inline-block;
+    color: white;
+    font-weight: 700;
+    font-size: 1.3rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+    text-decoration: none;
+    max-width: 100px;
+    margin-right: 10px;
+    letter-spacing: 1px;
+    padding: 10px;
+    border: solid 2px white;
+    border-radius: 2px;
+    z-index: 1;
+    cursor: pointer;
+    user-select: none;
+  }
+  &__menu-btn {
+    text-align: center;
+    display: inline-block;
+    color: white;
+    font-weight: 700;
+    font-size: 1.3rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+    text-decoration: none;
+    max-width: 90px;
+    letter-spacing: 1px;
+    padding: 10px;
+    border: solid 2px transparent;
+    z-index: 1;
+    cursor: pointer;
+    user-select: none;
+  }
+  &__search {
+    margin-right: 15px;
+    max-width: 20rem;
+    height: 3.6rem;
+    padding-right: 3.6rem;
+    padding-left: 1rem;
+    color: #111;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fff8f2;
+    border-radius: 8rem;
+    background-repeat: no-repeat;
+    background-position: center right 1.2rem;
+    background-size: 2rem 2rem;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.192 12.606a7 7 0 1 1 1.414-1.414l1.41 1.41a1.991 1.991 0 0 1 1.932.518l2.832 2.831c.78.78.785 2.04-.002 2.827a1.994 1.994 0 0 1-2.827.002l-2.831-2.832a1.994 1.994 0 0 1-.518-1.932l-1.41-1.41zM7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10z' fill ='rgb(20,65,97)'/%3E%3C/svg%3E");
+    border: none;
+    box-shadow: none;
+    z-index: 1;
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    left: -1000px;
+    top: 0;
+    bottom: 0;
+    width: 5000px;
+    background-color: $primary-color;
+    z-index: 0;
+  }
+}
+
+.main {
+  max-width: 1000px;
+  margin: auto;
+  &__page-image {
+    padding: 10px;
+    padding-top: 20px;
+  }
+
+  &__shortnews {
+    height: auto;
+    padding-top: 20px;
+  }
+  &__articles {
+    margin-top: 10px;
+    padding-right: 10px;
+  }
+  &__shortlist {
+    margin-top: 10px;
+  }
+}
+
+.menu {
+  &__row {
+    padding-top: 15px;
+    padding-bottom: 30px;
+    min-width: 30%;
+  }
+  &__item {
+    list-style: none;
+    margin-bottom: 0.2rem;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-align: left;
+    font-family: 'Raleway', Helvetica, Arial, sans-serif;
+    color: #333;
+  }
+}
+
+.profile {
+  padding-top: 15px;
+  padding-bottom: 30px;
+  padding-left: 20px;
+  &__title {
+    font-family: 'Montserrat', Times, serif;
+    font-style: normal;
+    line-height: 140%;
+    font-weight: 800;
+    font-size: 1.8rem;
+  }
+  &__btn {
+    font-family: 'Raleway', Helvetica, Arial, sans-serif;
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    color: #fff;
+    background: #144161;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    box-shadow: 0 -0.2rem rgba(0, 0, 0, 0.1) inset;
+    border: 0;
+    text-shadow: none;
+    outline: 0;
+  }
+}

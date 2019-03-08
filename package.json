@@ -217,6 +217,7 @@
     "react-apollo": "^2.4.0",
     "react-dom": "^16.6.0",
     "react-helmet": "^5.2.0",
+    "react-icons": "^3.5.0",
     "redux": "^4.0.1",
     "tailwindcss": "^0.7.4",
     "whatwg-fetch": "^3.0.0"

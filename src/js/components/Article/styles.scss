@@ -1,0 +1,27 @@
+.article {
+  &__headline {
+    font-size: 4rem;
+    line-height: 1.2em;
+    margin: 0 0 1.6rem;
+    font-family: 'Montserrat', Times, serif;
+  }
+  &__subheadline {
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+  &__info {
+    margin: 1.5rem 0 3rem;
+    padding: 2rem 0;
+    border-top: 1px dashed #ccc;
+    border-bottom: 1px dashed #ccc;
+  }
+  &__body {
+  }
+  &__paragraph {
+    font-family: 'Raleway', Helvetica, Arial, sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.7em;
+    margin: 0 0 2rem;
+    font-weight: 400;
+  }
+}

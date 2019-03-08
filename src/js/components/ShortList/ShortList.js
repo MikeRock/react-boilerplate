@@ -9,15 +9,24 @@ export default class ShortlList extends Component {
   state = {}
 
   render() {
-    const { title } = this.props
+    const { className } = this.props
     return (
-      <div className={`${_`shortlist`}`}>
-        <div className="headline-tag">
-          <a href="/notiser" class="uoh">
-            Flere nyheter
+      <div className={`${className || ''} ${_`shortlist`}`}>
+        <div className={`${_`shortlist__item`}`}>
+          <a className={`${_`shortlist__link`}`} href="/notiser">
+            Disse merkeforhandlerne hatt fått ny eier i 2019
           </a>
         </div>
-        <h3 class="shortnews-list__frontpage-headline">{$itemDay}</h3>
+        <div className={`${_`shortlist__item`}`}>
+          <a className={`${_`shortlist__link`}`} href="/notiser">
+            Årets første merkeforhandler-konkurs
+          </a>
+        </div>
+        <div className={`${_`shortlist__item`}`}>
+          <a className={`${_`shortlist__link`}`} href="/notiser">
+            Svak nedgang i antall lærlinger i bilfagene
+          </a>
+        </div>
       </div>
     )
   }

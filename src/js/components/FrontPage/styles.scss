@@ -25,7 +25,7 @@ $primary-color: #144161;
   padding: 20px;
   overflow: visible;
   &__logo {
-    padding-bottom: 50px;
+    padding-bottom: 40px;
     background-image: url(~assets:img/bilbransje24-logo.png);
     background-size: contain;
     background-repeat: no-repeat;
@@ -52,10 +52,10 @@ $primary-color: #144161;
   &::before {
     content: '';
     position: absolute;
-    left: -2000px;
+    left: -1000px;
     top: 0;
     bottom: 0;
-    width: 10000px;
+    width: 5000px;
     background-color: $primary-color;
     z-index: 0;
   }
@@ -66,13 +66,18 @@ $primary-color: #144161;
   margin: auto;
   &__page-image {
     padding: 10px;
+    padding-top: 20px;
   }
 
   &__shortnews {
-    overflow: hidden;
     height: auto;
+    padding-top: 20px;
   }
   &__articles {
+    margin-top: 10px;
+    padding-right: 10px;
+  }
+  &__shortlist {
     margin-top: 10px;
   }
 }
