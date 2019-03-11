@@ -1,6 +1,7 @@
 {
   "parser": "babel-eslint",
   "parserOptions": {
+    "legacyDecorators": true,
     "ecmaFeatures": {
       "jsx": true,
       "modules": true
@@ -28,8 +29,8 @@
     "promise/param-names": 1,
     "space-before-function-paren": 0,
     "no-unused-expressions": 1,
-    "promise/catch-or-return":1,
-    "promise/always-return":1,
-    "no-new":1
+    "promise/catch-or-return": 1,
+    "promise/always-return": 1,
+    "no-new": 1
   }
 }

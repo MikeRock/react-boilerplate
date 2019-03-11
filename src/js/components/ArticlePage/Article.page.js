@@ -9,9 +9,12 @@ import ShortList from './../ShortList/ShortList'
 import { FaUser } from 'react-icons/fa'
 import { MdMenu } from 'react-icons/md'
 import Helmet from 'react-helmet'
+import { withLogin } from './../LoginProvider/LoginProvider'
 import styles from './styles.scss'
 const _ = arg => classnames.bind(styles)(String.raw`${arg}`.split(' '))
-export default class ArticlePage extends Component {
+
+@withLogin
+class ArticlePage extends Component {
   state = { menu: false, profile: false }
   toggleMenu = () => {
     this.setState(prevState => ({ menu: !prevState.menu }))
@@ -163,3 +166,5 @@ export default class ArticlePage extends Component {
     )
   }
 }
+
+export default ArticlePage

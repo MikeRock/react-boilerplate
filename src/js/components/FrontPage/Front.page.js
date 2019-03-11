@@ -7,14 +7,21 @@ import ShortNews from './../ShortNews/ShortNews'
 import ShortList from './../ShortList/ShortList'
 import Helmet from 'react-helmet'
 import { Query } from 'react-apollo'
+import { withLogin } from './../LoginProvider/LoginProvider'
 import GET_ARTICLES from 'assets:queries/queries/getArticles.gql'
 import styles from './styles.scss'
 
 const _ = arg => classnames.bind(styles)(String.raw`${arg}`.split(' '))
-export default class FrontPage extends Component {
-  state = {}
+@withLogin
+class FrontPage extends Component {
+  static propTypes = {
+    login: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.any.isRequired
+  }
 
   render() {
+    const { login, logout, isAuthenticated } = this.props
     return (
       <Fragment>
         <Helmet>
@@ -31,7 +38,11 @@ export default class FrontPage extends Component {
             <div className={`flex-auto ${_`header__logo`}`} />
             <input type="text" className={`flex-auto ml-auto ${_`header__search`}`} />
           </div>
-          <Query query={GET_ARTICLES} variables={{ siteId: 99, page: 1, limit: 10 }}>
+          <Query
+            query={GET_ARTICLES}
+            variables={{ siteId: 99, page: 1, limit: 10 }}
+            context={{ login, logout, isAuthenticated }}
+          >
             {({ data, loading, error }) => (
               <div className={`flex-auto w-full ${_`page__main`}`}>
                 <div className={`flex flex-row flex-wrap ${_`main`}`}>
@@ -113,3 +124,5 @@ export default class FrontPage extends Component {
     )
   }
 }
+
+export default FrontPage

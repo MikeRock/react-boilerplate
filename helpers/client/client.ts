@@ -9,7 +9,6 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { RestLink } from 'apollo-link-rest'
 import { getMainDefinition } from 'apollo-utilities'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
-import nodeFetch from 'node-fetch'
 import raven from 'raven'
 
 /* Local */
