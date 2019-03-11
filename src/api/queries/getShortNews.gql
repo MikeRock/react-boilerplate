@@ -1,0 +1,10 @@
+mutation getShortNews($siteId: Int!) {
+  shortnews(siteId: $siteId) @rest(type: "[Shortnews]", method: "POST", path: "site/:siteId/short-news") {
+    id
+    title
+    content
+    url
+    source
+    published
+  }
+}

@@ -1,0 +1,5 @@
+query mockQuery {
+  person @rest(type: "Person", method: "GET", path: "people/1/", endpoint: "test") {
+    name
+  }
+}

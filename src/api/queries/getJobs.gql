@@ -1,0 +1,10 @@
+mutation getJobs($siteId: Int!) {
+  jobs(siteId: $siteId) @rest(type: "[Job]", method: "POST", path: "site/:siteId/jobs") {
+    id
+    title
+    description
+    external_url
+    published
+    image_id
+  }
+}

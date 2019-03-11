@@ -23,7 +23,6 @@ import WebpackNotifier from 'webpack-notifier'
 import WebpackBar from 'webpackbar'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import WorkerPlugin from 'worker-plugin'
-import GrapgQLLoader from 'graphql-tag/loader'
 import PreloadPlugin from 'preload-webpack-plugin'
 // import InlineManifestPlugin from 'inline-manifest-webpack-plugin'
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin'
@@ -42,10 +41,14 @@ import sass from 'node-sass'
 import glob from 'glob-all'
 import sassUtils from 'node-sass-utils'
 import incstr from 'incstr'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
 /**
  * @type {Object}
  */
-const { NODE_ENV, BROWSERSLIST_ENV, REST_URI, GRAPHQL_URI, API_TYPE } = process.env
+const { NODE_ENV, BROWSERSLIST_ENV, REST_URI, REST_TOKEN, GRAPHQL_URI, API_TYPE, RAVEN_PUBLIC_DSN } = process.env
 const isModern = BROWSERSLIST_ENV === 'modern'
 const isDev = /development/.test(NODE_ENV)
 const useClosureCompiler = /production-google/.test(NODE_ENV)
@@ -219,6 +222,7 @@ const config = () => ({
   resolve: {
     alias: {
       'assets:global': path.resolve(__dirname, 'vendor.global.scss'),
+      'assets:queries': path.resolve(process.cwd(), 'src/api'),
       'assets:css': path.resolve(process.cwd(), 'src/scss'),
       'assets:js': path.resolve(process.cwd(), 'src/js'),
       'assets:img': path.resolve(process.cwd(), 'src/img')
@@ -228,7 +232,7 @@ const config = () => ({
   module: {
     rules: [
       { test: /\.tsx?$/, exclude: /node_modules/, use: 'awesome-typescript-loader' },
-      { test: /\.(gql|graphql)$/, exclude: /node_modules/, use: GrapgQLLoader },
+      { test: /\.(gql|graphql)$/, exclude: /node_modules/, use: 'graphql-tag/loader' },
       { test: /\.md$/, exclude: /node_modules/, use: ['html-loader', 'markdown-loader'] },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
@@ -490,7 +494,9 @@ const config = () => ({
         BROWSERSLIST_ENV: JSON.stringify(BROWSERSLIST_ENV),
         REST_URI: JSON.stringify(REST_URI),
         GRAPHQL_URI: JSON.stringify(GRAPHQL_URI),
-        API_TYPE: JSON.stringify(API_TYPE)
+        API_TYPE: JSON.stringify(API_TYPE),
+        REST_TOKEN: JSON.stringify(REST_TOKEN),
+        RAVEN_PUBLIC_DSN: JSON.stringify(RAVEN_PUBLIC_DSN)
       },
       __BROWSER__: JSON.stringify(true)
     }),

@@ -1,18 +1,25 @@
 import gql from 'graphql-tag'
 import { Observable, ApolloLink } from 'apollo-link'
-import { hasDirectives, checkDocument, removeDirectivesFromDocument } from 'apollo-utilities'
+import { hasDirectives, checkDocument, removeDirectivesFromDocument, getOperationDefinition } from 'apollo-utilities'
+
+// INFO: Passing login status via context from LoginProvider
 
 export const AUTH_DIRECTIVE_NAME = 'auth'
 const sanitizedQueryCache = new Map()
 const authManager = {
-  isLoggedIn: () => {
+  isAuthenticated: operation => {
     // TODO: Return if user logged in from Context API
+    const { isAuthenticated } = operation.getContext()
+    return isAuthenticated
   },
-  logIn: () => {
+  login: operation => {
     // TODO: Action for login
+    const { login } = operation.getContext()
+    login && login()
   },
   authHeaderValue: () => {
     // TODO: Get Authorization token somehow
+    return localStorage.getItem('token')
   }
 }
 /**
@@ -48,9 +55,9 @@ export default new ApolloLink((operation: any, forward: any) => {
     let handle
 
     // if user is not logged in
-    if (!authManager.isLoggedIn()) {
+    if (!authManager.isAuthenticated()) {
       try {
-        await authManager.logIn()
+        await authManager.login(operation)
       } catch (err) {
         console.error(err)
         observer.complete([])
@@ -60,7 +67,7 @@ export default new ApolloLink((operation: any, forward: any) => {
     // add auth headers (by this point we should have them!)
     operation.setContext({
       headers: {
-        Authorization: authManager.authHeaderValue()
+        'X-Auth-Token': authManager.authHeaderValue()
       }
     })
 

@@ -2,18 +2,27 @@
   "compilerOptions": {
     /* Basic Options */
     "experimentalDecorators": true,
-    "target": "esnext",
+    "target": "es2017",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["es2015", "dom"],
+    "lib": ["es2017", "dom"],
     "strict": true,
     "jsx": "react",
     "allowJs": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
-    "types": ["node", "express", "react", "react-dom"],
-    "allowSyntheticDefaultImports": true
+    "types": ["node", "react", "react-dom", "raven"],
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./helpers",
+    "paths": {
+			"client/*": [
+				"./client/*"
+			]
+		}
   },
+  "awesomeTypescriptLoaderOptions": {
+    "errorsAsWarnings" : true
+},
   /*
   "rules": {
     "no-constant-condition": true

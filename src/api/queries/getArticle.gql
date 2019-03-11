@@ -1,0 +1,13 @@
+query getArticle($id: Int!, $siteId: Int!) {
+  article(id: $id, siteId: siteId) @rest(type: "Article", method: "GET", path: "/site/:siteId/article/:id") {
+    id
+    created
+    headline
+    url
+    access
+    pages @type(name: "[Page]") {
+      id
+      content
+    }
+  }
+}

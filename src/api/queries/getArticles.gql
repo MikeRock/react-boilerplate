@@ -1,0 +1,8 @@
+query getArticles($siteId: Int!, $page: Int = 1, $limit: Int = 10) {
+  articles(siteId: $siteId, page: $page, limit: $limit)
+    @rest(type: "[Article]", method: "GET", path: "/site/:siteId/articles?page=:page&limit=:limit") {
+    id
+    headline
+    url
+  }
+}
