@@ -9,7 +9,6 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { RestLink } from 'apollo-link-rest'
 import { getMainDefinition } from 'apollo-utilities'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
-import raven from 'raven'
 
 /* Local */
 // TODO: Decide if apollo state is needed
@@ -39,12 +38,12 @@ export function createClient(): ApolloClient<NormalizedCacheObject> {
   })
   // TODO: Pass auth headers through apollo links
   const headers = new Headers()
-  headers.append('X-AUTH_TOKEN', process.env.REST_TOKEN as string)
+  headers.append('X-AUTH-TOKEN', process.env.REST_TOKEN as string)
   headers.append('Accept', 'application/json')
 
   // Rest link for generating REST requests
   const restLink = new RestLink({
-    credentials: 'include',
+    credentials: 'omit',
     headers,
     endpoints: {
       prod: process.env.REST_URI || 'https://swapi.co/api/',

@@ -10,6 +10,8 @@ import { FaUser } from 'react-icons/fa'
 import { MdMenu } from 'react-icons/md'
 import Helmet from 'react-helmet'
 import { withLogin } from './../LoginProvider/LoginProvider'
+import { Query } from 'react-apollo'
+import GET_ARTICLE from 'assets:queries/queries/getArticle.gql'
 import styles from './styles.scss'
 const _ = arg => classnames.bind(styles)(String.raw`${arg}`.split(' '))
 
@@ -89,6 +91,7 @@ class ArticlePage extends Component {
               <div className={`flex-auto max-w-70 ${_`main__page-image`}`}>
                 <ArticleCard
                   top
+                  link="asdasd"
                   className={`flex-auto`}
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
@@ -98,12 +101,17 @@ class ArticlePage extends Component {
                 <ShortNews />
               </div>
               <div className={`flex-auto flex flex-row flex-wrap justify-start max-w-70 ${_`main__articles`}`}>
-                <Article />
+                <Query query={GET_ARTICLE} variables={{ id: 456804, siteId: 99 }}>
+                  {({ data: { article }, loading, error }) => {
+                    return loading ? null : <Article headline={article.headline} content={article.pages[0].content} />
+                  }}
+                </Query>
               </div>
-              <div className={`flex-auto flex flex-row flex-wrap justify-start max-w-30 ${_`main__articles`}`}>
+              <div className={`flex-auto flex flex-row flex-wrap justify-start max-w-30 ${_`main__aside`}`}>
                 <ArticleCard
                   className={`flex-auto`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />
@@ -111,6 +119,7 @@ class ArticlePage extends Component {
                 <ArticleCard
                   className={`flex-auto`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />
@@ -118,20 +127,23 @@ class ArticlePage extends Component {
                 <ArticleCard
                   className={`flex-auto`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />
               </div>
-              <div className={`flex-auto flex flex-row flex-wrap justify-around ${_`main__articles`}`}>
+              <div className={`flex-auto flex flex-row flex-wrap justify-between ${_`main__articles`}`}>
                 <ArticleCard
                   className={`flex-auto max-w-50`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />
                 <ArticleCard
                   className={`flex-auto max-w-50`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />
@@ -140,18 +152,21 @@ class ArticlePage extends Component {
                 <ArticleCard
                   className={`flex-auto max-w-30`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />
                 <ArticleCard
                   className={`flex-auto max-w-30`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />
                 <ArticleCard
                   className={`flex-auto max-w-30`}
                   title="Ajour pr 7. mars: Bilbransjens 2018-regnskap"
+                  link="asdasd"
                   tag="test"
                   image={`https://img.gfx.no/2403/2403409/kalkulator_2.613x345c.jpg`}
                 />

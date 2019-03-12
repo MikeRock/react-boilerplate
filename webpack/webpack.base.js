@@ -48,7 +48,16 @@ dotenv.config()
 /**
  * @type {Object}
  */
-const { NODE_ENV, BROWSERSLIST_ENV, REST_URI, REST_TOKEN, GRAPHQL_URI, API_TYPE, RAVEN_PUBLIC_DSN } = process.env
+const {
+  NODE_ENV,
+  BROWSERSLIST_ENV,
+  REST_URI,
+  REST_TOKEN,
+  GRAPHQL_URI,
+  API_TYPE,
+  RAVEN_PUBLIC_DSN,
+  PATH_PREFIX
+} = process.env
 const isModern = BROWSERSLIST_ENV === 'modern'
 const isDev = /development/.test(NODE_ENV)
 const useClosureCompiler = /production-google/.test(NODE_ENV)
@@ -496,7 +505,8 @@ const config = () => ({
         GRAPHQL_URI: JSON.stringify(GRAPHQL_URI),
         API_TYPE: JSON.stringify(API_TYPE),
         REST_TOKEN: JSON.stringify(REST_TOKEN),
-        RAVEN_PUBLIC_DSN: JSON.stringify(RAVEN_PUBLIC_DSN)
+        RAVEN_PUBLIC_DSN: JSON.stringify(RAVEN_PUBLIC_DSN),
+        PATH_PREFIX: JSON.stringify(PATH_PREFIX)
       },
       __BROWSER__: JSON.stringify(true)
     }),

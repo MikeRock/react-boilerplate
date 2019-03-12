@@ -1,19 +1,31 @@
-/* global __PATH_PREFIX__ */
 import PropTypes from 'prop-types'
-import React from 'react'
-import { Link as RouterLink } from '@reach/router'
-// TODO: Add __PATH__PREFIX__ via webpack
-export function withPrefix(path) {
-  return normalizePath(`${__PATH_PREFIX__}/${path}`)
-}
+import React, { Component } from 'react'
+import { NavLink as RouterLink } from 'react-router'
+import prefetch from './../../../../helpers/prefetch'
 
+export const withPrefix = path => normalizePath(`${process.env.PATH_PREFIX}/${path}`)
+
+// Normalize path
 function normalizePath(path) {
   return path.replace(/\/+/g, `/`)
+}
+// Detect slow networks
+function isSlow() {
+  if (`connection` in navigator && (navigator.connection.effectiveType || ``).includes(`2g`)) {
+    return true
+  }
+  if (navigator.connection.saveData) {
+    return true
+  }
+  return false
 }
 
 const NavLinkPropTypes = {
   activeClassName: PropTypes.string,
-  activeStyle: PropTypes.object
+  activeStyle: PropTypes.object,
+  innerRef: PropTypes.func,
+  to: PropTypes.string.isRequired,
+  replace: PropTypes.bool
 }
 
 // Set up IntersectionObserver
@@ -35,36 +47,41 @@ const handleIntersection = (el, cb) => {
   io.observe(el)
 }
 
-class Link extends React.Component {
-  constructor(props) {
-    super(props)
+class Link extends Component {
+  static propTypes = {
+    ...NavLinkPropTypes,
+    onClick: PropTypes.func,
+    onMouseEnter: PropTypes.func
+  }
+
+  constructor(...args) {
+    super(...args)
     // Default to no support for IntersectionObserver
     let IOSupported = false
     if (typeof window !== `undefined` && window.IntersectionObserver) {
       IOSupported = true
     }
-
     this.state = {
       IOSupported
     }
-    this.handleRef = this.handleRef.bind(this)
   }
 
   componentDidUpdate(prevProps, prevState) {
     // Preserve non IO functionality if no support
     if (this.props.to !== prevProps.to && !this.state.IOSupported) {
-      //TODO: Handle case if IO NOT supported
+      // TODO: Handle case if IO NOT supported
+      !isSlow && prefetch(this.props.to)
     }
   }
 
   componentDidMount() {
     // Preserve non IO functionality if no support
     if (!this.state.IOSupported) {
-      //TODO: Handle case if IO NOT supported
+      // TODO: Handle case if IO NOT supported ->  lazy load pollyfill?
     }
   }
 
-  handleRef(ref) {
+  handleRef = ref => {
     if (this.props.innerRef) {
       this.props.innerRef(ref)
     }
@@ -72,31 +89,20 @@ class Link extends React.Component {
     if (this.state.IOSupported && ref) {
       // If IO supported and element reference found, setup Observer functionality
       handleIntersection(ref, () => {
-        //TODO: Handle case if IO supported and element reference found
+        // TODO: Handle case if IO supported and element reference found
+        !isSlow && prefetch(this.props.to)
       })
     }
   }
 
-  defaultGetProps = ({ isCurrent }) => {
-    if (isCurrent) {
-      return {
-        className: [this.props.className, this.props.activeClassName].filter(Boolean).join(` `),
-        style: { ...this.props.style, ...this.props.activeStyle }
-      }
-    }
-    return null
-  }
-
   render() {
     const {
-      to,
-      getProps = this.defaultGetProps,
+      to: path,
       onClick,
       onMouseEnter,
       /* eslint-disable no-unused-vars */
-      activeClassName: $activeClassName,
-      activeStyle: $activeStyle,
-      innerRef: $innerRef,
+      activeClassName,
+      activeStyle,
       state,
       replace,
       /* eslint-enable no-unused-vars */
@@ -104,30 +110,29 @@ class Link extends React.Component {
     } = this.props
 
     const LOCAL_URL = /^\/(?!\/)/
-    if (process.env.NODE_ENV !== `production` && !LOCAL_URL.test(to)) {
+    if (/production/.test(process.env.NODE_ENV) && !LOCAL_URL.test(path)) {
       console.warn(
-        `External link ${to} was detected in a Link component. Use the Link component only for internal links.`
+        `External link ${path} was detected in a Link component. Use the Link component only for internal links.`
       )
     }
 
-    const prefixedTo = withPrefix(to)
-
     return (
       <RouterLink
-        to={prefixedTo}
-        state={state}
-        getProps={getProps}
+        activeClassName={activeClassName}
+        activeStyle={activeStyle}
+        to={{
+          path: path,
+          state
+        }}
         innerRef={this.handleRef}
         onMouseEnter={e => {
-          if (onMouseEnter) {
-            onMouseEnter(e)
-          }
-          // TODO: Handle case if HOVERED
+          onMouseEnter && onMouseEnter(e)
+          // Skip prefetching if we know user is on slow or constrained connection
+
+          !isSlow && prefetch(path)
         }}
         onClick={e => {
-          if (onClick) {
-            onClick(e)
-          }
+          onClick && onClick(e)
 
           if (
             e.button === 0 && // ignore right clicks
@@ -142,7 +147,6 @@ class Link extends React.Component {
 
             // Make sure the necessary scripts and data are
             // loaded before continuing.
-            navigate(to, { state, replace })
           }
 
           return true
@@ -152,36 +156,5 @@ class Link extends React.Component {
     )
   }
 }
-
-Link.propTypes = {
-  ...NavLinkPropTypes,
-  innerRef: PropTypes.func,
-  onClick: PropTypes.func,
-  to: PropTypes.string.isRequired,
-  replace: PropTypes.bool
-}
-
-export default React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />)
-
-export const navigate = (to, options) => {
-  window.___navigate(withPrefix(to), options)
-}
-
-export const push = to => {
-  console.warn(`The "push" method is now deprecated and will be removed in Gatsby v3. Please use "navigate" instead.`)
-  window.___push(withPrefix(to))
-}
-
-export const replace = to => {
-  console.warn(
-    `The "replace" method is now deprecated and will be removed in Gatsby v3. Please use "navigate" instead.`
-  )
-  window.___replace(withPrefix(to))
-}
-
-export const navigateTo = to => {
-  console.warn(
-    `The "navigateTo" method is now deprecated and will be removed in Gatsby v3. Please use "navigate" instead.`
-  )
-  return push(to)
-}
+const Comp = React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />)
+export default Comp
