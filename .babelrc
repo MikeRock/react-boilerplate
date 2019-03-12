@@ -20,19 +20,19 @@
     }], */
     "macros",
     [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
+    "@babel/plugin-proposal-class-properties",
+    [
       "@babel/plugin-transform-runtime",
       {
         "regenerator": true,
         "sourceType": "script"
       }
     ],
-    [
-      "@babel/plugin-proposal-decorators",
-      {
-        "decoratorsBeforeExport": true
-      }
-    ],
-    "@babel/plugin-proposal-class-properties",
     "@babel/plugin-proposal-object-rest-spread"
   ],
   "env": {

@@ -31,4 +31,9 @@ $primary-color: #144161;
     display: inline-block;
     pointer-events: none;
   }
+  &__link,
+  &__link:active {
+    text-decoration: none;
+    color: #000;
+  }
 }

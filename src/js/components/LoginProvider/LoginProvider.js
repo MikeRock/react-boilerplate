@@ -1,7 +1,7 @@
 import React, { Component, createContext } from 'react'
 import PropTypes from 'prop-types'
 
-const LoginContext = createContext({
+const { Provider, Consumer } = createContext({
   isAuthenticated: false,
   login: () => {
     throw new Error(`Method "login" needs to be implemented`)
@@ -26,14 +26,14 @@ export default class LoginProvider extends Component {
   }
   render() {
     const { login, logout } = this
-    return (
-      <LoginContext.Provider value={{ login, logout, isAuthenticated: this.state.loggedIn }}>
-        {this.props.children}
-      </LoginContext.Provider>
-    )
+    return <Provider value={{ login, logout, isAuthenticated: this.state.loggedIn }}>{this.props.children}</Provider>
   }
 }
-
+export const LoginProviderPropTypes = {
+  isAuthenticated: PropTypes.bool,
+  login: PropTypes.func,
+  logout: PropTypes.func
+}
 export const withLogin = _Component =>
   class Wrapped extends Component {
     static propTypes = {
@@ -42,13 +42,13 @@ export const withLogin = _Component =>
     render() {
       const { children, ...rest } = this.props
       return (
-        <LoginContext.Consumer>
-          {provider => (
-            <_Component {...rest} {...provider}>
+        <Consumer>
+          {values => (
+            <_Component {...rest} {...values}>
               {children}
             </_Component>
           )}
-        </LoginContext.Consumer>
+        </Consumer>
       )
     }
   }

@@ -11,8 +11,8 @@ class App extends Component {
       <LoginProvider>
         <Router>
           <Switch>
-            <Route exact path="/" component={FrontPage} />
-            <Route path="/article/:id" render={props => <ArticlePage {...props} />} />
+            <Route exact path="/" component={ArticlePage} />
+            <Route path="/artikler/:article/:id" component={ArticlePage} />
             <Route component={FrontPage} />
           </Switch>
         </Router>
