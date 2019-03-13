@@ -1,7 +1,9 @@
 import React, { Component, createContext } from 'react'
 import PropTypes from 'prop-types'
+import { ApolloConsumer } from 'react-apollo'
+import LOGIN from 'assets:queries/queries/login.gql'
 
-const LoginContext = createContext({
+const { Provider, Consumer } = createContext({
   isAuthenticated: false,
   login: () => {
     throw new Error(`Method "login" needs to be implemented`)
@@ -16,9 +18,17 @@ export default class LoginProvider extends Component {
   static propTypes = {
     children: PropTypes.any.isRequired
   }
-  login(token) {
-    localStorage.setItem('token', token)
-    this.setState({ loggedIn: true })
+  async login(client) {
+    localStorage.removeItem('token')
+    // TODO: implement login flow
+    try {
+      const { token } = await client.query(LOGIN)
+      localStorage.setItem('token', token)
+      this.setState({ loggedIn: true })
+      return true
+    } catch (err) {
+      return false
+    }
   }
   logout() {
     localStorage.removeItem('token')
@@ -27,13 +37,21 @@ export default class LoginProvider extends Component {
   render() {
     const { login, logout } = this
     return (
-      <LoginContext.Provider value={{ login, logout, isAuthenticated: this.state.loggedIn }}>
-        {this.props.children}
-      </LoginContext.Provider>
+      <ApolloConsumer>
+        {client => (
+          <Provider value={{ login: login.bind(client), logout, isAuthenticated: this.state.loggedIn }}>
+            {this.props.children}
+          </Provider>
+        )}
+      </ApolloConsumer>
     )
   }
 }
-
+export const LoginProviderPropTypes = {
+  isAuthenticated: PropTypes.bool,
+  login: PropTypes.func,
+  logout: PropTypes.func
+}
 export const withLogin = _Component =>
   class Wrapped extends Component {
     static propTypes = {
@@ -42,13 +60,13 @@ export const withLogin = _Component =>
     render() {
       const { children, ...rest } = this.props
       return (
-        <LoginContext.Consumer>
-          {provider => (
-            <_Component {...rest} {...provider}>
+        <Consumer>
+          {values => (
+            <_Component {...rest} {...values}>
               {children}
             </_Component>
           )}
-        </LoginContext.Consumer>
+        </Consumer>
       )
     }
   }

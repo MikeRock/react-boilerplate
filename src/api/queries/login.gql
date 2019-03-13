@@ -1,0 +1,8 @@
+query login {
+  login @rest(type: "Login", method: "GET", path: "/login") {
+    loginUrl @as(name: "url")
+    response @rest(type: "LoginResponse", method: "GET", path: "/:url") {
+      token
+    }
+  }
+}

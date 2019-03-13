@@ -58,6 +58,7 @@ const {
   RAVEN_PUBLIC_DSN,
   PATH_PREFIX
 } = process.env
+const staticRoutes = require('./../static.json')
 const isModern = BROWSERSLIST_ENV === 'modern'
 const isDev = /development/.test(NODE_ENV)
 const useClosureCompiler = /production-google/.test(NODE_ENV)
@@ -508,7 +509,8 @@ const config = () => ({
         RAVEN_PUBLIC_DSN: JSON.stringify(RAVEN_PUBLIC_DSN),
         PATH_PREFIX: JSON.stringify(PATH_PREFIX)
       },
-      __BROWSER__: JSON.stringify(true)
+      __BROWSER__: JSON.stringify(true),
+      __STATIC__: staticRoutes
     }),
     isDev
       ? noop()

@@ -10,13 +10,14 @@ function normalizePath(path) {
   return path.replace(/\/+/g, `/`)
 }
 // Detect slow networks
-function isSlow() {
+function isSlowOrOffline() {
   if (`connection` in navigator && (navigator.connection.effectiveType || ``).includes(`2g`)) {
     return true
   }
-  if (navigator.connection.saveData) {
+  if (`connection` in navigator && navigator.connection.saveData) {
     return true
   }
+  if (navigator.onLine) return true
   return false
 }
 
@@ -51,7 +52,8 @@ class Link extends Component {
   static propTypes = {
     ...NavLinkPropTypes,
     onClick: PropTypes.func,
-    onMouseEnter: PropTypes.func
+    onMouseEnter: PropTypes.func,
+    prefetch: PropTypes.oneOfType([PropTypes.bool, PropTypes.object])
   }
 
   constructor(...args) {
@@ -70,7 +72,7 @@ class Link extends Component {
     // Preserve non IO functionality if no support
     if (this.props.to !== prevProps.to && !this.state.IOSupported) {
       // TODO: Handle case if IO NOT supported
-      !isSlow && prefetch(this.props.to)
+      //  !isSlowOrOffline && prefetch(this.props.to)
     }
   }
 
@@ -90,7 +92,7 @@ class Link extends Component {
       // If IO supported and element reference found, setup Observer functionality
       handleIntersection(ref, () => {
         // TODO: Handle case if IO supported and element reference found
-        !isSlow && prefetch(this.props.to)
+        // !isSlowOrOffline  && prefetch(this.props.to)
       })
     }
   }
@@ -129,7 +131,7 @@ class Link extends Component {
           onMouseEnter && onMouseEnter(e)
           // Skip prefetching if we know user is on slow or constrained connection
 
-          !isSlow && prefetch(path)
+          //  !isSlowOrOffline && prefetch(path)
         }}
         onClick={e => {
           onClick && onClick(e)
@@ -156,5 +158,5 @@ class Link extends Component {
     )
   }
 }
-const Comp = React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />)
-export default Comp
+// eslint-disable-next-line react/display-name
+export default React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />)

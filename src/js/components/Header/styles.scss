@@ -74,6 +74,10 @@ $primary-color: #144161;
     z-index: 1;
   }
 
+  &__icon {
+    vertical-align: text-top;
+  }
+
   &::before {
     content: '';
     position: absolute;
